@@ -1,0 +1,17 @@
+name: Pipeline - High Frequency (30m)
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+      # Placeholder: Snapshot GraphQL + client release Atom feeds
+      # To be implemented in Week 2
+      - run: echo "30m pipeline sources not yet configured"

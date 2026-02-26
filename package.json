@@ -1,0 +1,17 @@
+{
+  "name": "ethpulse",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "pipeline"
+  ],
+  "scripts": {
+    "pipeline": "npm run start --workspace=pipeline",
+    "pipeline:dev": "npm run dev --workspace=pipeline",
+    "seed": "npm run seed --workspace=pipeline",
+    "typecheck": "npm run typecheck --workspace=pipeline"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
