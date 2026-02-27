@@ -16,13 +16,14 @@ export function SourceList({ sources }: { sources: SourceRegistry[] }) {
         return (
           <div
             key={source.id}
-            className="flex items-center justify-between p-3 transition-all duration-150"
+            className="flex items-center justify-between p-3 transition-all duration-200"
             style={{
               background: hidden ? 'transparent' : 'var(--bg-card)',
               border: hidden
                 ? '1px dashed var(--border-subtle)'
                 : '1px solid var(--border-medium)',
               opacity: hidden ? 0.5 : 1,
+              boxShadow: hidden ? 'none' : '0 2px 12px rgba(0, 0, 0, 0.2)',
             }}
           >
             <div className="min-w-0 flex-1">
@@ -42,12 +43,13 @@ export function SourceList({ sources }: { sources: SourceRegistry[] }) {
             </div>
             <button
               onClick={() => toggleHideSource(source.id)}
-              className="ml-3 shrink-0 px-3 py-1 text-[10px] font-medium tracking-widest uppercase transition-colors duration-150"
+              className="btn-neon ml-3 shrink-0 px-3 py-1 text-[10px] font-medium tracking-widest uppercase"
               style={{
                 color: hidden ? 'var(--text-muted)' : 'var(--accent)',
                 border: hidden
                   ? '1px solid var(--border-subtle)'
                   : '1px solid var(--accent)',
+                textShadow: hidden ? 'none' : '0 0 8px rgba(59, 130, 246, 0.2)',
               }}
             >
               [{hidden ? 'off' : 'on'}]

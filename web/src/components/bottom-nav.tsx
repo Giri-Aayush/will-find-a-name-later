@@ -14,31 +14,30 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-50"
+    <nav className="fixed bottom-0 left-0 right-0 z-50 glass"
       style={{
-        background: 'rgba(8, 8, 12, 0.95)',
-        backdropFilter: 'blur(8px)',
         borderTop: '1px solid var(--border-medium)',
       }}
     >
-      <div className="mx-auto flex max-w-lg items-center justify-around py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex max-w-lg items-center justify-around pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {NAV_ITEMS.map(item => {
           const active = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className="flex flex-col items-center gap-0.5 px-4 py-1 transition-all duration-150"
+              className="btn-neon flex flex-col items-center justify-center gap-0.5 px-3 py-1"
               style={{
                 color: active ? 'var(--accent)' : 'var(--text-muted)',
                 fontSize: '10px',
                 fontWeight: active ? 600 : 400,
                 letterSpacing: '0.1em',
+                textShadow: active ? '0 0 10px rgba(59, 130, 246, 0.3)' : 'none',
               }}
             >
-              <span className="text-[13px]">{item.icon}</span>
+              <span className="text-[12px]">{item.icon}</span>
               <span className="uppercase">{item.label}</span>
+              {active && <div className="nav-glow-dot" />}
             </Link>
           );
         })}

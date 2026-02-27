@@ -2,24 +2,29 @@ export default function AboutPage() {
   return (
     <main className="mx-auto max-w-lg px-5 py-6 pb-24">
       <h1
-        className="text-sm font-medium tracking-widest uppercase mb-6"
+        className="text-sm font-semibold tracking-widest uppercase mb-6"
         style={{ color: 'var(--text-primary)' }}
       >
-        <span style={{ color: 'var(--accent)' }}>[</span>
+        <span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[</span>
         about
-        <span style={{ color: 'var(--accent)' }}>]</span>
+        <span className="text-glow-accent" style={{ color: 'var(--accent)' }}>]</span>
       </h1>
 
       {/* Stats */}
       <div
         className="flex items-center gap-4 text-[10px] tracking-wider uppercase mb-8 py-3 px-4"
-        style={{ border: '1px solid var(--border-medium)', color: 'var(--text-secondary)' }}
+        style={{
+          border: '1px solid var(--border-medium)',
+          color: 'var(--text-secondary)',
+          background: 'var(--bg-surface)',
+          boxShadow: '0 0 20px rgba(59, 130, 246, 0.04)',
+        }}
       >
-        <span><span style={{ color: 'var(--accent)' }}>[30]</span> sources</span>
+        <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[30]</span> sources</span>
         <span style={{ color: 'var(--text-muted)' }}>//</span>
-        <span><span style={{ color: 'var(--accent)' }}>[8]</span> categories</span>
+        <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[8]</span> categories</span>
         <span style={{ color: 'var(--text-muted)' }}>//</span>
-        <span><span style={{ color: 'var(--accent)' }}>[60]</span> word cards</span>
+        <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[60]</span> word cards</span>
       </div>
 
       {/* What is EthPulse */}
@@ -55,7 +60,7 @@ export default function AboutPage() {
         href="https://github.com/Giri-Aayush/will-find-a-name-later"
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 mt-1 mb-8 px-4 py-2 text-[10px] font-medium uppercase tracking-widest transition-all hover:brightness-110"
+        className="btn-cta inline-flex items-center gap-2 mt-1 mb-8 px-4 py-2.5 text-[10px] font-medium uppercase tracking-widest"
         style={{ background: 'var(--accent)', color: '#fff' }}
       >
         view on github
@@ -82,7 +87,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <section className="mb-6">
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-[10px] tracking-wider" style={{ color: 'var(--accent)' }}>&gt;</span>
+        <span className="text-[10px] tracking-wider text-glow-accent" style={{ color: 'var(--accent)' }}>&gt;</span>
         <span
           className="text-[10px] font-medium tracking-widest uppercase"
           style={{ color: 'var(--text-primary)' }}

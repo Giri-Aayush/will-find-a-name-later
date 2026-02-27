@@ -38,8 +38,12 @@ function SavedCards() {
       {savedCards.map(card => (
         <div
           key={card.id}
-          className="p-4"
-          style={{ border: '1px solid var(--border-medium)', background: 'var(--bg-card)' }}
+          className="card-ambient p-4"
+          data-category={card.category}
+          style={{
+            border: '1px solid var(--border-medium)',
+            background: 'var(--bg-card)',
+          }}
         >
           <Card card={card} />
         </div>
@@ -52,12 +56,12 @@ export default function SavedPage() {
   return (
     <main className="mx-auto max-w-lg px-4 py-6 pb-24">
       <h1
-        className="text-sm font-medium tracking-widest uppercase mb-6"
+        className="text-sm font-semibold tracking-widest uppercase mb-6"
         style={{ color: 'var(--text-primary)' }}
       >
-        <span style={{ color: 'var(--accent)' }}>[</span>
+        <span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[</span>
         saved
-        <span style={{ color: 'var(--accent)' }}>]</span>
+        <span className="text-glow-accent" style={{ color: 'var(--accent)' }}>]</span>
       </h1>
 
       <SignedIn>
@@ -74,7 +78,7 @@ export default function SavedPage() {
           </p>
           <SignInButton mode="modal">
             <button
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-[11px] font-medium uppercase tracking-widest transition-all hover:brightness-110"
+              className="btn-cta inline-flex items-center gap-2 px-5 py-2.5 text-[11px] font-medium uppercase tracking-widest"
               style={{ background: 'var(--accent)', color: '#fff' }}
             >
               sign in

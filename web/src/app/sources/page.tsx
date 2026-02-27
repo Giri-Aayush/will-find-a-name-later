@@ -8,12 +8,12 @@ export default async function SourcesPage() {
   return (
     <main className="mx-auto max-w-lg px-5 py-6 pb-24">
       <h1
-        className="text-sm font-medium tracking-widest uppercase mb-2"
+        className="text-sm font-semibold tracking-widest uppercase mb-2"
         style={{ color: 'var(--text-primary)' }}
       >
-        <span style={{ color: 'var(--accent)' }}>[</span>
+        <span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[</span>
         sources
-        <span style={{ color: 'var(--accent)' }}>]</span>
+        <span className="text-glow-accent" style={{ color: 'var(--accent)' }}>]</span>
       </h1>
       <p
         className="text-[10px] tracking-wider uppercase mb-6"

@@ -47,9 +47,10 @@ export function ToastProvider() {
         background: 'var(--bg-elevated)',
         border: '1px solid var(--border-medium)',
         color: 'var(--text-primary)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4), 0 0 10px var(--accent-dim)',
       }}
     >
-      <span style={{ color: 'var(--accent)' }}>[&gt;]</span> {message}
+      <span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[&gt;]</span> {message}
     </div>
   );
 }

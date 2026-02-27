@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
+import { usePathname } from 'next/navigation';
 import { toast } from './toast';
 import { capture } from '@/lib/posthog';
 
@@ -10,6 +11,7 @@ export function FeedbackWidget() {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { isSignedIn } = useUser();
+  const pathname = usePathname();
 
   // ESC key to close
   useEffect(() => {
@@ -21,8 +23,8 @@ export function FeedbackWidget() {
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  // Only show for signed-in users
-  if (!isSignedIn) return null;
+  // Only show for signed-in users, hide on feed page (cards have their own actions)
+  if (!isSignedIn || pathname === '/') return null;
 
   async function handleSubmit() {
     if (!message.trim() || submitting) return;
@@ -53,19 +55,19 @@ export function FeedbackWidget() {
 
   return (
     <>
-      {/* Trigger button — bottom-right, above bottom nav */}
+      {/* Trigger button — bottom-left, above bottom nav */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed z-40 text-[10px] font-medium tracking-widest uppercase transition-all hover:brightness-125"
+          className="fixed z-40 text-[10px] font-medium tracking-widest uppercase btn-neon"
           style={{
             bottom: 'calc(60px + max(0.5rem, env(safe-area-inset-bottom)))',
-            right: '16px',
+            left: '16px',
             color: 'var(--text-muted)',
             border: '1px solid var(--border-subtle)',
             padding: '6px 10px',
-            background: 'rgba(8, 8, 12, 0.9)',
-            backdropFilter: 'blur(4px)',
+            background: 'rgba(6, 6, 10, 0.9)',
+            backdropFilter: 'blur(8px)',
           }}
         >
           [~] feedback
@@ -78,7 +80,7 @@ export function FeedbackWidget() {
           {/* Backdrop */}
           <div
             className="fixed inset-0 z-40 animate-fade-in"
-            style={{ background: 'rgba(8, 8, 12, 0.6)' }}
+            style={{ background: 'rgba(6, 6, 10, 0.7)', backdropFilter: 'blur(4px)' }}
             onClick={() => setOpen(false)}
           />
 
@@ -94,6 +96,7 @@ export function FeedbackWidget() {
               style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-medium)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
               }}
             >
               {/* Header */}
@@ -141,7 +144,7 @@ export function FeedbackWidget() {
                   <button
                     onClick={handleSubmit}
                     disabled={!message.trim() || submitting}
-                    className="px-4 py-1.5 text-[10px] font-medium tracking-widest uppercase transition-all hover:brightness-110 disabled:opacity-40"
+                    className="btn-cta px-4 py-1.5 text-[10px] font-medium tracking-widest uppercase disabled:opacity-40"
                     style={{ background: 'var(--accent)', color: '#fff' }}
                   >
                     [send]
