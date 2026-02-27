@@ -6,10 +6,20 @@ export const dynamic = 'force-dynamic';
 export default async function SourcesPage() {
   const sources = await getSources();
   return (
-    <main className="mx-auto max-w-lg px-4 py-6">
-      <h1 className="text-xl font-bold mb-4">Sources</h1>
-      <p className="text-sm text-gray-400 mb-4">
-        {sources.length} active sources. Toggle visibility to customize your feed.
+    <main className="mx-auto max-w-lg px-5 py-6 pb-24">
+      <h1
+        className="text-sm font-medium tracking-widest uppercase mb-2"
+        style={{ color: 'var(--text-primary)' }}
+      >
+        <span style={{ color: 'var(--accent)' }}>[</span>
+        sources
+        <span style={{ color: 'var(--accent)' }}>]</span>
+      </h1>
+      <p
+        className="text-[10px] tracking-wider uppercase mb-6"
+        style={{ color: 'var(--text-muted)' }}
+      >
+        {sources.length} active sources // toggle visibility to customize your feed
       </p>
       <SourceList sources={sources} />
     </main>

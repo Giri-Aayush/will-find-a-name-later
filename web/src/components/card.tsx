@@ -5,6 +5,7 @@ import { useUser, useClerk } from '@clerk/nextjs';
 import type { Card as CardType } from '@ethpulse/shared';
 import { relativeTime, extractDomain, CATEGORY_LABELS, CATEGORY_BADGE_CLASS } from '@/lib/utils';
 import { useSaved } from '@/stores/saved';
+import { useReactions } from '@/stores/reactions';
 import { toast } from './toast';
 import { capture } from '@/lib/posthog';
 
@@ -30,13 +31,21 @@ export function Card({ card }: CardProps) {
   const { isSignedIn } = useUser();
   const clerk = useClerk();
   const { isSaved, toggleSave, init, initialized } = useSaved();
+  const { getUserReaction, getCounts, react, fetchForCards } = useReactions();
   const saved = initialized && isSaved(card.id);
+  const userReaction = getUserReaction(card.id);
+  const counts = getCounts(card.id);
   const badgeClass = CATEGORY_BADGE_CLASS[card.category] ?? 'badge-research';
   const categoryLabel = CATEGORY_LABELS[card.category] ?? card.category;
 
   useEffect(() => {
     if (isSignedIn) init();
   }, [isSignedIn, init]);
+
+  // Fetch reactions for this card
+  useEffect(() => {
+    fetchForCards([card.id]);
+  }, [card.id, fetchForCards]);
 
   // Auto-dismiss thank you after 3s
   useEffect(() => {
@@ -112,17 +121,36 @@ export function Card({ card }: CardProps) {
     capture('card_flagged', { card_id: card.id, reason: flagReason });
   }
 
+  // ── Reaction handler ──
+
+  async function handleReaction(e: React.MouseEvent, type: 'up' | 'down') {
+    e.stopPropagation();
+    if (isSignedIn === false) {
+      clerk.openSignIn();
+      return;
+    }
+    if (!isSignedIn) return;
+    navigator.vibrate?.(10);
+    await react(card.id, type);
+    capture('card_reacted', { card_id: card.id, reaction: type });
+  }
+
   // ── Save handler ──
 
   async function handleSave(e: React.MouseEvent) {
     e.stopPropagation();
-    if (!isSignedIn) {
+    if (isSignedIn === false) {
       clerk.openSignIn();
       return;
     }
-    const nowSaved = await toggleSave(card.id);
-    capture(nowSaved ? 'card_saved' : 'card_unsaved', { card_id: card.id });
-    toast(nowSaved ? 'Saved' : 'Removed from saved');
+    if (!isSignedIn) return;
+    try {
+      const nowSaved = await toggleSave(card.id);
+      capture(nowSaved ? 'card_saved' : 'card_unsaved', { card_id: card.id });
+      toast(nowSaved ? 'Saved' : 'Removed from saved');
+    } catch {
+      toast('Failed to save — try again');
+    }
   }
 
   return (
@@ -203,14 +231,35 @@ export function Card({ card }: CardProps) {
             background: 'var(--accent)',
             color: '#fff',
           }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            capture('source_clicked', { card_id: card.id, url: card.canonical_url });
+          }}
         >
           Read source
           <span className="text-[10px]">-&gt;</span>
         </a>
 
         {/* Action bar — terminal-style */}
-        <div className="flex items-center gap-5 mt-3 pb-14 relative" ref={shareRef}>
+        <div className="flex items-center gap-4 mt-3 pb-14 relative" ref={shareRef}>
+          {/* Reactions */}
+          <button
+            onClick={(e) => handleReaction(e, 'up')}
+            className="flex items-center gap-1 text-[10px] font-medium tracking-wider uppercase transition-colors"
+            style={{ color: userReaction === 'up' ? 'var(--accent-green)' : 'var(--text-muted)' }}
+          >
+            <span>[+{counts.up >= 3 ? counts.up : ''}]</span>
+            Useful
+          </button>
+          <button
+            onClick={(e) => handleReaction(e, 'down')}
+            className="flex items-center gap-1 text-[10px] font-medium tracking-wider uppercase transition-colors"
+            style={{ color: userReaction === 'down' ? 'var(--accent-red)' : 'var(--text-muted)' }}
+          >
+            <span>[-{counts.down >= 3 ? counts.down : ''}]</span>
+            Nah
+          </button>
+
           <button
             onClick={handleSave}
             className="flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase transition-colors"
@@ -236,12 +285,12 @@ export function Card({ card }: CardProps) {
               <>
                 {/* Backdrop */}
                 <div
-                  className="fixed inset-0 z-40"
+                  className="fixed inset-0 z-40 animate-fade-in"
                   onClick={(e) => { e.stopPropagation(); setShareOpen(false); }}
                 />
                 {/* Menu */}
                 <div
-                  className="absolute bottom-full left-0 mb-2 z-50 py-1 min-w-[160px]"
+                  className="absolute bottom-full left-0 mb-2 z-50 py-1 min-w-[160px] animate-slide-up"
                   style={{
                     background: 'var(--bg-elevated)',
                     border: '1px solid var(--border-medium)',

@@ -13,6 +13,8 @@ export interface Card {
   fetched_at: string;
   engagement: EngagementMetrics | null;
   flag_count: number;
+  reaction_up_count: number;
+  reaction_down_count: number;
   is_suspended: boolean;
   pipeline_version: string;
 }

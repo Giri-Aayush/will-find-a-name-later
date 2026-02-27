@@ -46,7 +46,7 @@ export const useSaved = create<SavedState>((set, get) => ({
       body: JSON.stringify({ card_id: cardId }),
     });
 
-    if (!res.ok) return false;
+    if (!res.ok) throw new Error('Failed to save');
 
     const { saved } = await res.json();
 

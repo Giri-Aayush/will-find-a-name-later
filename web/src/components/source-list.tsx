@@ -2,7 +2,7 @@
 
 import type { SourceRegistry } from '@ethpulse/shared';
 import { usePreferences } from '@/stores/preferences';
-import { CATEGORY_LABELS } from '@/lib/utils';
+import { CATEGORY_LABELS, CATEGORY_BADGE_CLASS } from '@/lib/utils';
 
 export function SourceList({ sources }: { sources: SourceRegistry[] }) {
   const { hiddenSources, toggleHideSource } = usePreferences();
@@ -11,33 +11,46 @@ export function SourceList({ sources }: { sources: SourceRegistry[] }) {
     <div className="space-y-2">
       {sources.map(source => {
         const hidden = hiddenSources.includes(source.id);
+        const badgeClass = CATEGORY_BADGE_CLASS[source.default_category] ?? 'badge-research';
+
         return (
           <div
             key={source.id}
-            className={`flex items-center justify-between rounded-lg border p-3 transition-colors ${
-              hidden
-                ? 'border-gray-800/50 bg-gray-900/50 opacity-60'
-                : 'border-gray-800 bg-gray-900'
-            }`}
+            className="flex items-center justify-between p-3 transition-all duration-150"
+            style={{
+              background: hidden ? 'transparent' : 'var(--bg-card)',
+              border: hidden
+                ? '1px dashed var(--border-subtle)'
+                : '1px solid var(--border-medium)',
+              opacity: hidden ? 0.5 : 1,
+            }}
           >
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-medium truncate">{source.display_name}</div>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-xs text-gray-500 truncate">{source.id}</span>
-                <span className="text-xs text-gray-600">
+              <div
+                className="text-[12px] font-medium truncate"
+                style={{ color: hidden ? 'var(--text-muted)' : 'var(--text-primary)' }}
+              >
+                {source.display_name}
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <span
+                  className={`inline-block px-1.5 py-0.5 text-[9px] font-medium tracking-widest uppercase ${badgeClass}`}
+                >
                   {CATEGORY_LABELS[source.default_category] ?? source.default_category}
                 </span>
               </div>
             </div>
             <button
               onClick={() => toggleHideSource(source.id)}
-              className={`ml-3 shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                hidden
-                  ? 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-                  : 'bg-blue-900/50 text-blue-300 hover:bg-blue-800/50'
-              }`}
+              className="ml-3 shrink-0 px-3 py-1 text-[10px] font-medium tracking-widest uppercase transition-colors duration-150"
+              style={{
+                color: hidden ? 'var(--text-muted)' : 'var(--accent)',
+                border: hidden
+                  ? '1px solid var(--border-subtle)'
+                  : '1px solid var(--accent)',
+              }}
             >
-              {hidden ? 'Hidden' : 'Visible'}
+              [{hidden ? 'off' : 'on'}]
             </button>
           </div>
         );

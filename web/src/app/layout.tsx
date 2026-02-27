@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import { BottomNav } from '@/components/bottom-nav';
+import { FeedbackWidget } from '@/components/feedback-widget';
 import { ToastProvider } from '@/components/toast';
 import { PostHogProvider } from '@/components/posthog-provider';
 
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <PostHogProvider>
             {children}
             <BottomNav />
+            <FeedbackWidget />
             <ToastProvider />
           </PostHogProvider>
         </body>

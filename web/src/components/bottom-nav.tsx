@@ -29,7 +29,7 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex flex-col items-center gap-0.5 px-4 py-1 transition-colors"
+              className="flex flex-col items-center gap-0.5 px-4 py-1 transition-all duration-150"
               style={{
                 color: active ? 'var(--accent)' : 'var(--text-muted)',
                 fontSize: '10px',

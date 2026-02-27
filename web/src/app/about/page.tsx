@@ -1,57 +1,102 @@
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-lg px-4 py-6 space-y-6">
-      <h1 className="text-xl font-bold">About EthPulse</h1>
+    <main className="mx-auto max-w-lg px-5 py-6 pb-24">
+      <h1
+        className="text-sm font-medium tracking-widest uppercase mb-6"
+        style={{ color: 'var(--text-primary)' }}
+      >
+        <span style={{ color: 'var(--accent)' }}>[</span>
+        about
+        <span style={{ color: 'var(--accent)' }}>]</span>
+      </h1>
 
-      <p className="text-sm text-gray-300 leading-relaxed">
+      {/* Stats */}
+      <div
+        className="flex items-center gap-4 text-[10px] tracking-wider uppercase mb-8 py-3 px-4"
+        style={{ border: '1px solid var(--border-medium)', color: 'var(--text-secondary)' }}
+      >
+        <span><span style={{ color: 'var(--accent)' }}>[30]</span> sources</span>
+        <span style={{ color: 'var(--text-muted)' }}>//</span>
+        <span><span style={{ color: 'var(--accent)' }}>[8]</span> categories</span>
+        <span style={{ color: 'var(--text-muted)' }}>//</span>
+        <span><span style={{ color: 'var(--accent)' }}>[60]</span> word cards</span>
+      </div>
+
+      {/* What is EthPulse */}
+      <Section title="what_is_ethpulse">
         EthPulse aggregates, curates, and summarises information from across the
         Ethereum ecosystem and delivers it as a feed of 60-word story cards. Each
         card captures one event, proposal, decision, or development — enough context
         to understand what happened and why it matters.
-      </p>
+      </Section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Data Sources</h2>
-        <p className="text-sm text-gray-400 leading-relaxed">
-          30 sources across 6 tiers: core protocol research (ethresear.ch, Ethereum Magicians),
-          EIP/ERC registries, All Core Devs project management, governance forums
-          (Optimism, Arbitrum, zkSync, Starknet, Uniswap), 10 Ethereum client release
-          feeds, community newsletters, and DefiLlama on-chain metrics.
-        </p>
-      </section>
+      {/* Data Sources */}
+      <Section title="data_sources">
+        30 sources across 6 tiers: core protocol research (ethresear.ch, Ethereum
+        Magicians), EIP/ERC registries, All Core Devs project management, governance
+        forums (Optimism, Arbitrum, zkSync, Starknet, Uniswap), 10 Ethereum client
+        release feeds, community newsletters, and DefiLlama on-chain metrics.
+      </Section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">How It Works</h2>
-        <p className="text-sm text-gray-400 leading-relaxed">
-          A data pipeline polls sources on schedules ranging from 30 minutes to 4 hours.
-          New items are normalised, deduplicated, classified into 8 categories, and
-          summarised by an AI model into exactly 60 words. The resulting cards appear
-          in your feed within hours of the original publication.
-        </p>
-      </section>
+      {/* How It Works */}
+      <Section title="how_it_works">
+        A data pipeline polls sources on schedules ranging from 30 minutes to 4 hours.
+        New items are normalised, deduplicated, classified into 8 categories, and
+        summarised by an AI model into exactly 60 words. The resulting cards appear
+        in your feed within hours of the original publication.
+      </Section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Open Source</h2>
-        <p className="text-sm text-gray-400 leading-relaxed">
-          Built with Next.js, Supabase, and TypeScript. MIT License.
-        </p>
-        <a
-          href="https://github.com/Giri-Aayush/will-find-a-name-later"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block mt-2 text-sm font-medium text-blue-400 hover:text-blue-300"
-        >
-          View on GitHub &rarr;
-        </a>
-      </section>
+      {/* Open Source */}
+      <Section title="open_source">
+        Built with Next.js, Supabase, and TypeScript. MIT License.
+      </Section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Report an Issue</h2>
-        <p className="text-sm text-gray-400 leading-relaxed">
-          See an inaccurate card? Tap the Flag button on any card to submit a report.
-          Flagged cards are reviewed within 24 hours.
+      <a
+        href="https://github.com/Giri-Aayush/will-find-a-name-later"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 mt-1 mb-8 px-4 py-2 text-[10px] font-medium uppercase tracking-widest transition-all hover:brightness-110"
+        style={{ background: 'var(--accent)', color: '#fff' }}
+      >
+        view on github
+        <span className="text-[10px]">-&gt;</span>
+      </a>
+
+      {/* Report */}
+      <Section title="report_issue">
+        See an inaccurate card? Tap the [!] flag button on any card to submit a
+        report. Flagged cards are reviewed within 24 hours.
+      </Section>
+
+      {/* Footer */}
+      <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+        <p className="text-[9px] tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+          ethereum ecosystem intelligence
         </p>
-      </section>
+      </div>
     </main>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="mb-6">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-[10px] tracking-wider" style={{ color: 'var(--accent)' }}>&gt;</span>
+        <span
+          className="text-[10px] font-medium tracking-widest uppercase"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          {title}
+        </span>
+        <div className="h-px flex-1" style={{ background: 'var(--border-subtle)' }} />
+      </div>
+      <p
+        className="text-[12px] leading-[1.8] font-light pl-4"
+        style={{ color: 'var(--text-secondary)' }}
+      >
+        {children}
+      </p>
+    </section>
   );
 }

@@ -94,6 +94,22 @@ body::before {
   from { opacity: 0; transform: translateX(-8px); }
   to { opacity: 1; transform: translateX(0); }
 }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
 
 .animate-in {
   animation: fadeInUp 0.3s ease-out both;
@@ -101,10 +117,26 @@ body::before {
 .animate-slide {
   animation: slideIn 0.3s ease-out both;
 }
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out both;
+}
+.animate-fade-out {
+  animation: fadeOut 0.2s ease-out both;
+}
+.animate-slide-up {
+  animation: slideUp 0.25s ease-out both;
+}
 .animate-delay-1 { animation-delay: 0.05s; }
 .animate-delay-2 { animation-delay: 0.1s; }
 .animate-delay-3 { animation-delay: 0.15s; }
 .animate-delay-4 { animation-delay: 0.2s; }
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
 
 /* Terminal cursor blink */
 .cursor-blink::after {
