@@ -49,6 +49,11 @@ function extractAuthor(sourceId: string, metadata: Record<string, unknown>): str
     return `@${metadata.author as string}`;
   }
 
+  // CryptoPanic / Crypto News — use original source name
+  if (metadata.source_name) {
+    return metadata.source_name as string;
+  }
+
   return null;
 }
 
@@ -65,6 +70,17 @@ function extractEngagement(
       likes: metadata.like_count as number | undefined,
       replies: metadata.reply_count as number | undefined,
       views: metadata.views as number | undefined,
+    };
+  }
+
+  // CryptoPanic votes
+  if (
+    metadata.votes_positive !== undefined ||
+    metadata.votes_comments !== undefined
+  ) {
+    return {
+      likes: metadata.votes_positive as number | undefined,
+      replies: metadata.votes_comments as number | undefined,
     };
   }
 

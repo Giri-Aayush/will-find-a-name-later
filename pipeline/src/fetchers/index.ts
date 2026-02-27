@@ -4,6 +4,8 @@ import { GitHubRepoFetcher } from './github-repo.js';
 import { RssFetcher } from './rss.js';
 import { HtmlScraperFetcher } from './html-scraper.js';
 import { DefiLlamaFetcher } from './defillama.js';
+import { CryptoPanicFetcher } from './cryptopanic.js';
+import { CryptoNewsFetcher } from './crypto-news.js';
 import type { FetcherConfig } from '@ethpulse/shared';
 
 const FETCHER_MAP: Record<string, new (config: FetcherConfig) => BaseFetcher> = {
@@ -12,6 +14,8 @@ const FETCHER_MAP: Record<string, new (config: FetcherConfig) => BaseFetcher> = 
   rss: RssFetcher,
   html_scraper: HtmlScraperFetcher,
   rest_api: DefiLlamaFetcher,
+  cryptopanic: CryptoPanicFetcher,
+  crypto_news_api: CryptoNewsFetcher,
 };
 
 export function createFetcher(config: FetcherConfig): BaseFetcher {

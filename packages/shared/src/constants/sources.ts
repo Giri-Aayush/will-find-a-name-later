@@ -4,7 +4,7 @@ export interface SourceDefinition {
   id: string;
   display_name: string;
   base_url: string;
-  api_type: 'discourse' | 'github_api' | 'rss' | 'graphql' | 'html_scraper';
+  api_type: 'discourse' | 'github_api' | 'rss' | 'graphql' | 'html_scraper' | 'rest_api' | 'cryptopanic' | 'crypto_news_api';
   poll_interval_s: number;
   default_category: Category;
 }
@@ -274,6 +274,43 @@ export const TIER_6_SOURCES: SourceDefinition[] = [
   },
 ];
 
+// ── Tier 7: Crypto Social / Trending Sources ────────────────────────────
+
+export const TIER_7_SOURCES: SourceDefinition[] = [
+  {
+    id: 'cryptopanic.com/trending',
+    display_name: 'CryptoPanic — Trending',
+    base_url: 'https://cryptopanic.com/api/developer/v2/posts/',
+    api_type: 'cryptopanic',
+    poll_interval_s: 1800,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'cryptopanic.com/hot',
+    display_name: 'CryptoPanic — Hot',
+    base_url: 'https://cryptopanic.com/api/developer/v2/posts/',
+    api_type: 'cryptopanic',
+    poll_interval_s: 1800,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'cryptopanic.com/rising',
+    display_name: 'CryptoPanic — Rising',
+    base_url: 'https://cryptopanic.com/api/developer/v2/posts/',
+    api_type: 'cryptopanic',
+    poll_interval_s: 1800,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'cryptocurrency.cv/news',
+    display_name: 'Crypto News — Latest',
+    base_url: 'https://cryptocurrency.cv/api/news',
+    api_type: 'crypto_news_api',
+    poll_interval_s: 3600,
+    default_category: 'ANNOUNCEMENT',
+  },
+];
+
 // ── All Sources ────────────────────────────────────────────────────────
 
 export const ALL_SOURCES: SourceDefinition[] = [
@@ -282,4 +319,5 @@ export const ALL_SOURCES: SourceDefinition[] = [
   ...TIER_3_SOURCES,
   ...TIER_5_SOURCES,
   ...TIER_6_SOURCES,
+  ...TIER_7_SOURCES,
 ];

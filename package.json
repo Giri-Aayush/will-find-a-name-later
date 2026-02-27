@@ -3,13 +3,16 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "pipeline"
+    "pipeline",
+    "web"
   ],
   "scripts": {
+    "dev": "npm run dev --workspace=web",
+    "build": "npm run build --workspace=web",
     "pipeline": "npm run start --workspace=pipeline",
     "pipeline:dev": "npm run dev --workspace=pipeline",
     "seed": "npm run seed --workspace=pipeline",
-    "typecheck": "npm run typecheck --workspace=pipeline"
+    "typecheck": "npm run typecheck --workspace=pipeline && npm run typecheck --workspace=web"
   },
   "engines": {
     "node": ">=20.0.0"

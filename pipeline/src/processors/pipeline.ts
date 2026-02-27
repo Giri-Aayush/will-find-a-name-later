@@ -7,6 +7,7 @@ import { summarize } from './summarizer.js';
 import { hashUrl } from '../utils/hash.js';
 import { loadConfig } from '../config.js';
 import { logger } from '../utils/logger.js';
+import { supabase } from '../db/client.js';
 
 export async function processRawItems(): Promise<{ processed: number; skipped: number; failed: number }> {
   const config = loadConfig();
@@ -57,7 +58,7 @@ export async function processRawItems(): Promise<{ processed: number; skipped: n
       const { headline, summary } = await summarize(normalized.fullText, normalized.title);
 
       // 5. Create card
-      await createCard({
+      const cardId = await createCard({
         sourceId: normalized.sourceId,
         canonicalUrl: normalized.canonicalUrl,
         urlHash: hashUrl(normalized.canonicalUrl),
@@ -69,6 +70,18 @@ export async function processRawItems(): Promise<{ processed: number; skipped: n
         engagement: normalized.engagement,
         pipelineVersion: config.pipelineVersion,
       });
+
+      // 6. Queue high-priority items (SECURITY / UPGRADE)
+      if (category === 'SECURITY' || category === 'UPGRADE') {
+        const { error: hpqError } = await supabase
+          .from('high_priority_queue')
+          .insert({ card_id: cardId, category });
+        if (hpqError) {
+          logger.warn(`Failed to queue high-priority card ${cardId}: ${hpqError.message}`);
+        } else {
+          logger.info(`HIGH PRIORITY: ${category} card queued`);
+        }
+      }
 
       await markAsProcessed(item.id);
       processed++;

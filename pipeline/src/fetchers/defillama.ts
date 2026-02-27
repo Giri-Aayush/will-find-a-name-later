@@ -193,7 +193,7 @@ export class DefiLlamaFetcher extends BaseFetcher {
 
       results.push({
         sourceId: this.config.sourceId,
-        canonicalUrl: `https://defillama.com/stablecoins/${stable.symbol.toLowerCase()}/${dateStr}`,
+        canonicalUrl: `https://defillama.com/stablecoins?snapshot=${dateStr}&symbol=${stable.symbol.toLowerCase()}`,
         rawTitle: title,
         rawText: text,
         rawMetadata: {
@@ -266,7 +266,7 @@ export class DefiLlamaFetcher extends BaseFetcher {
 
         results.push({
           sourceId: this.config.sourceId,
-          canonicalUrl: `https://defillama.com/chain/${encodeURIComponent(chain.toLowerCase())}/${dateStr}`,
+          canonicalUrl: `https://defillama.com/chain/${encodeURIComponent(chain)}?snapshot=${dateStr}`,
           rawTitle: title,
           rawText: text,
           rawMetadata: {
@@ -345,7 +345,7 @@ export class DefiLlamaFetcher extends BaseFetcher {
       const slug = dex.name.toLowerCase().replace(/\s+/g, '-');
       results.push({
         sourceId: this.config.sourceId,
-        canonicalUrl: `https://defillama.com/dex/${slug}/${dateStr}`,
+        canonicalUrl: `https://defillama.com/dexs?snapshot=${dateStr}&protocol=${slug}`,
         rawTitle: title,
         rawText: text,
         rawMetadata: {

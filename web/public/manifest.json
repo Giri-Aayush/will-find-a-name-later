@@ -1,0 +1,16 @@
+{
+  "name": "EthPulse",
+  "short_name": "EthPulse",
+  "description": "Ethereum ecosystem intelligence in 60-word cards.",
+  "start_url": "/?utm_source=pwa",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "categories": ["news", "technology"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

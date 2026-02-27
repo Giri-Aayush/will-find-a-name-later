@@ -13,6 +13,7 @@ export function loadConfig() {
     githubPat: process.env.GITHUB_PAT ?? '',
     // AI API keys — optional when using local Ollama
     groqApiKey: process.env.GROQ_API_KEY ?? '',
+    cryptoPanicApiKey: process.env.CRYPTOPANIC_API_KEY ?? '',
     pipelineVersion: process.env.PIPELINE_VERSION ?? '0.1.0',
     logLevel: (process.env.LOG_LEVEL ?? 'info') as 'debug' | 'info' | 'warn' | 'error',
     dryRun: process.env.DRY_RUN === 'true',

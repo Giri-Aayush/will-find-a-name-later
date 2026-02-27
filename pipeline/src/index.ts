@@ -10,6 +10,10 @@ const SOURCE_API_TYPE_MAP: Record<string, string> = {
   'defillama.com/stablecoins': 'rest_api',
   'defillama.com/chains': 'rest_api',
   'defillama.com/dexs': 'rest_api',
+  'cryptopanic.com/trending': 'cryptopanic',
+  'cryptopanic.com/hot': 'cryptopanic',
+  'cryptopanic.com/rising': 'cryptopanic',
+  'cryptocurrency.cv/news': 'crypto_news_api',
 };
 
 function resolveApiType(sourceId: string): string {
@@ -23,16 +27,38 @@ function parseSourceFilter(args: string[]): string | undefined {
   return value === 'all' ? undefined : value;
 }
 
+function parseIntervalFilter(args: string[]): { min?: number; max?: number } {
+  const minArg = args.find((a) => a.startsWith('--min-interval='));
+  const maxArg = args.find((a) => a.startsWith('--max-interval='));
+  return {
+    min: minArg ? parseInt(minArg.split('=')[1], 10) : undefined,
+    max: maxArg ? parseInt(maxArg.split('=')[1], 10) : undefined,
+  };
+}
+
 async function main() {
   const config = loadConfig();
   const sourceFilter = parseSourceFilter(process.argv);
+  const intervalFilter = parseIntervalFilter(process.argv);
 
   logger.info(`EthPulse Pipeline v${config.pipelineVersion}`);
   logger.info(`Source filter: ${sourceFilter ?? 'all'}`);
+  if (intervalFilter.min || intervalFilter.max) {
+    logger.info(`Interval filter: min=${intervalFilter.min ?? '-'} max=${intervalFilter.max ?? '-'}`);
+  }
   if (config.dryRun) logger.info('DRY RUN mode — no AI calls or card creation');
 
   // 1. Get active sources
-  const sources = await getActiveSources(sourceFilter);
+  let sources = await getActiveSources(sourceFilter);
+
+  // Apply interval filtering
+  if (intervalFilter.min) {
+    sources = sources.filter((s) => s.poll_interval_s >= intervalFilter.min!);
+  }
+  if (intervalFilter.max) {
+    sources = sources.filter((s) => s.poll_interval_s <= intervalFilter.max!);
+  }
+
   logger.info(`Found ${sources.length} active sources`);
 
   if (sources.length === 0) {

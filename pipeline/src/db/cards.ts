@@ -14,8 +14,8 @@ export interface CreateCardParams {
   pipelineVersion: string;
 }
 
-export async function createCard(params: CreateCardParams): Promise<void> {
-  const { error } = await supabase.from('cards').insert({
+export async function createCard(params: CreateCardParams): Promise<string> {
+  const { data, error } = await supabase.from('cards').insert({
     source_id: params.sourceId,
     canonical_url: params.canonicalUrl,
     url_hash: params.urlHash,
@@ -26,9 +26,10 @@ export async function createCard(params: CreateCardParams): Promise<void> {
     published_at: params.publishedAt.toISOString(),
     engagement: params.engagement,
     pipeline_version: params.pipelineVersion,
-  });
+  }).select('id').single();
 
   if (error) throw new Error(`Failed to create card for ${params.canonicalUrl}: ${error.message}`);
+  return data.id;
 }
 
 export async function findByUrlHash(urlHash: string): Promise<Card | null> {

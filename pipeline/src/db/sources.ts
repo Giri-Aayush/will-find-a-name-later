@@ -8,6 +8,23 @@ const REST_API_SOURCE_IDS = [
   'defillama.com/dexs',
 ];
 
+const CRYPTOPANIC_SOURCE_IDS = [
+  'cryptopanic.com/trending',
+  'cryptopanic.com/hot',
+  'cryptopanic.com/rising',
+];
+
+const CRYPTO_NEWS_SOURCE_IDS = [
+  'cryptocurrency.cv/news',
+];
+
+// Map filter aliases to source ID arrays for api_types stored with NULL in DB
+const SOURCE_ID_FILTERS: Record<string, string[]> = {
+  rest_api: REST_API_SOURCE_IDS,
+  cryptopanic: CRYPTOPANIC_SOURCE_IDS,
+  crypto_news_api: CRYPTO_NEWS_SOURCE_IDS,
+};
+
 export async function getActiveSources(apiTypeFilter?: string): Promise<SourceRegistry[]> {
   let query = supabase
     .from('source_registry')
@@ -15,9 +32,10 @@ export async function getActiveSources(apiTypeFilter?: string): Promise<SourceRe
     .eq('is_active', true);
 
   if (apiTypeFilter && apiTypeFilter !== 'all') {
-    if (apiTypeFilter === 'rest_api') {
-      // rest_api sources may have NULL api_type in DB — filter by known IDs
-      query = query.in('id', REST_API_SOURCE_IDS);
+    const knownIds = SOURCE_ID_FILTERS[apiTypeFilter];
+    if (knownIds) {
+      // These api_types may have NULL api_type in DB — filter by known IDs
+      query = query.in('id', knownIds);
     } else {
       query = query.eq('api_type', apiTypeFilter);
     }

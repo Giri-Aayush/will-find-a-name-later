@@ -28,8 +28,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           PIPELINE_VERSION: '0.1.0'
 
-      - name: Run pipeline for RSS sources
-        run: npm run pipeline -- --sources=rss
+      - name: Run pipeline for RSS sources (exclude 30m-interval Tier 5 feeds)
+        run: npm run pipeline -- --sources=rss --min-interval=1801
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}

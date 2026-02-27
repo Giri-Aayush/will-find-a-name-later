@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { logger } from '../utils/logger.js';
+import { checkEntityPreservation } from './entity-checker.js';
 
 // Use local Ollama — no rate limits, no API key needed
 const ollama = new OpenAI({
@@ -35,6 +36,13 @@ function countWords(text: string): number {
   return text.split(/\s+/).filter(Boolean).length;
 }
 
+const MAX_RETRIES = 3;
+const MIN_WORDS = 58;
+const MAX_WORDS = 62;
+// Looser fallback for local Ollama — tighten after Anthropic migration
+const FALLBACK_MIN = 50;
+const FALLBACK_MAX = 70;
+
 export async function summarize(
   fullText: string,
   title: string
@@ -46,12 +54,23 @@ export async function summarize(
     : fullText;
 
   let summary = '';
-  const MAX_RETRIES = 2;
+  let lastWordCount = 0;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    const prompt = attempt === 1
-      ? buildUserPrompt(truncatedText)
-      : buildUserPrompt(truncatedText) + `\n\nIMPORTANT: Your previous summary was ${countWords(summary)} words. It MUST be exactly 60 words.`;
+    let prompt = buildUserPrompt(truncatedText);
+
+    // On retry: provide word count feedback
+    if (attempt > 1) {
+      prompt += `\n\nIMPORTANT: Your previous summary was ${lastWordCount} words. It MUST be between ${MIN_WORDS} and ${MAX_WORDS} words. Count carefully.`;
+    }
+
+    // On retry: check entity preservation from previous attempt
+    if (attempt > 1 && summary) {
+      const entityCheck = checkEntityPreservation(truncatedText, summary);
+      if (!entityCheck.passed && entityCheck.missingEntities.length > 0) {
+        prompt += `\nYou MUST include these entities: ${entityCheck.missingEntities.join(', ')}`;
+      }
+    }
 
     const response = await ollama.chat.completions.create({
       model: MODEL,
@@ -63,21 +82,41 @@ export async function summarize(
     });
 
     summary = response.choices[0]?.message?.content?.trim() ?? '';
+    lastWordCount = countWords(summary);
 
-    const summaryWordCount = countWords(summary);
-    if (summaryWordCount >= 40 && summaryWordCount <= 80) {
+    // Strict range: 58-62 words
+    if (lastWordCount >= MIN_WORDS && lastWordCount <= MAX_WORDS) {
       break;
     }
 
-    // On last retry, accept any summary with at least 20 words
+    // On final retry: accept looser range, otherwise fail
     if (attempt === MAX_RETRIES) {
-      if (summaryWordCount >= 20) {
+      if (lastWordCount >= FALLBACK_MIN && lastWordCount <= FALLBACK_MAX) {
+        logger.warn(
+          `Summary word count ${lastWordCount} outside strict range (${MIN_WORDS}-${MAX_WORDS}), accepting after ${MAX_RETRIES} retries`
+        );
+        break;
+      }
+      if (lastWordCount >= 20) {
+        logger.warn(
+          `Summary word count ${lastWordCount} far from target, accepting minimal summary after ${MAX_RETRIES} retries`
+        );
         break;
       }
       throw new Error(
-        `Summarization failed after ${MAX_RETRIES} retries (last word count: ${summaryWordCount})`
+        `Summarization failed after ${MAX_RETRIES} retries (last word count: ${lastWordCount})`
       );
     }
+
+    logger.debug(`Attempt ${attempt}: summary was ${lastWordCount} words, retrying...`);
+  }
+
+  // Final entity preservation check — log warning but don't block
+  const entityCheck = checkEntityPreservation(truncatedText, summary);
+  if (!entityCheck.passed) {
+    logger.warn(
+      `Entity preservation check failed: missing [${entityCheck.missingEntities.join(', ')}]`
+    );
   }
 
   // Generate headline (max 12 words)

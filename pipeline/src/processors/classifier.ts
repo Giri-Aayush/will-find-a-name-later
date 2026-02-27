@@ -41,6 +41,12 @@ const SOURCE_CATEGORY_MAP: Record<string, Category> = {
   'defillama.com/stablecoins': 'METRICS',
   'defillama.com/chains': 'METRICS',
   'defillama.com/dexs': 'METRICS',
+
+  // Tier 7 — Crypto Social / Trending
+  'cryptopanic.com/trending': 'ANNOUNCEMENT',
+  'cryptopanic.com/hot': 'ANNOUNCEMENT',
+  'cryptopanic.com/rising': 'ANNOUNCEMENT',
+  'cryptocurrency.cv/news': 'ANNOUNCEMENT',
 };
 
 export function classify(sourceId: string): Category {

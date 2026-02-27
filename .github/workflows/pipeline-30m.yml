@@ -12,6 +12,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      # Placeholder: Snapshot GraphQL + client release Atom feeds
-      # To be implemented in Week 2
-      - run: echo "30m pipeline sources not yet configured"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run pipeline for high-frequency sources (30m interval)
+        run: npm run pipeline -- --sources=rss --max-interval=1800
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          PIPELINE_VERSION: '0.1.0'
