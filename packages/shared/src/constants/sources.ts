@@ -90,14 +90,6 @@ export const TIER_2_SOURCES: SourceDefinition[] = [
     default_category: 'PROTOCOL_CALLS',
   },
   {
-    id: 'weekinethereum.substack.com',
-    display_name: 'Week in Ethereum News',
-    base_url: 'https://weekinethereum.substack.com',
-    api_type: 'rss',
-    poll_interval_s: 7200,
-    default_category: 'ANNOUNCEMENT',
-  },
-  {
     id: 'christinedkim.substack.com',
     display_name: 'Christine Kim — ACDC Notes',
     base_url: 'https://christinedkim.substack.com',
@@ -311,6 +303,199 @@ export const TIER_7_SOURCES: SourceDefinition[] = [
   },
 ];
 
+// ── Tier 8: DeFi Protocol Governance (Discourse) ────────────────────────
+
+export const TIER_8_DEFI_GOVERNANCE: SourceDefinition[] = [
+  {
+    id: 'research.lido.fi',
+    display_name: 'Lido Research Forum',
+    base_url: 'https://research.lido.fi',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'comp.xyz',
+    display_name: 'Compound Community Forum',
+    base_url: 'https://comp.xyz',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'gov.curve.finance',
+    display_name: 'Curve Governance Forum',
+    base_url: 'https://gov.curve.finance',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'discuss.ens.domains',
+    display_name: 'ENS DAO Forum',
+    base_url: 'https://discuss.ens.domains',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'forum.eigenlayer.xyz',
+    display_name: 'EigenLayer Forum',
+    base_url: 'https://forum.eigenlayer.xyz',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'forum.thegraph.com',
+    display_name: 'The Graph Forum',
+    base_url: 'https://forum.thegraph.com',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'forum.safe.global',
+    display_name: 'Safe Forum',
+    base_url: 'https://forum.safe.global',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+];
+
+// ── Tier 9: Additional L2 Governance (Discourse) ────────────────────────
+
+export const TIER_9_L2_GOVERNANCE: SourceDefinition[] = [
+  {
+    id: 'forum.scroll.io',
+    display_name: 'Scroll Governance Forum',
+    base_url: 'https://forum.scroll.io',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'forum.polygon.technology',
+    display_name: 'Polygon Community Forum',
+    base_url: 'https://forum.polygon.technology',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'community.linea.build',
+    display_name: 'Linea Community Forum',
+    base_url: 'https://community.linea.build',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'community.taiko.xyz',
+    display_name: 'Taiko Community Forum',
+    base_url: 'https://community.taiko.xyz',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+];
+
+// ── Tier 10: MEV / PBS (Discourse + GitHub) ──────────────────────────────
+
+export const TIER_10_MEV: SourceDefinition[] = [
+  {
+    id: 'collective.flashbots.net',
+    display_name: 'Flashbots Collective Forum',
+    base_url: 'https://collective.flashbots.net',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'RESEARCH',
+  },
+  {
+    id: 'github.com/flashbots/pm',
+    display_name: 'Flashbots Project Management',
+    base_url: 'https://github.com/flashbots/pm',
+    api_type: 'github_api',
+    poll_interval_s: 14400,
+    default_category: 'RESEARCH',
+  },
+  {
+    id: 'github.com/flashbots/mev-boost-relay',
+    display_name: 'Flashbots MEV-Boost Relay',
+    base_url: 'https://github.com/flashbots/mev-boost-relay',
+    api_type: 'github_api',
+    poll_interval_s: 14400,
+    default_category: 'UPGRADE',
+  },
+];
+
+// ── Tier 11: Standards & Developer Tooling (GitHub) ──────────────────────
+
+export const TIER_11_STANDARDS: SourceDefinition[] = [
+  {
+    id: 'github.com/ethereum/RIPs',
+    display_name: 'Rollup Improvement Proposals',
+    base_url: 'https://github.com/ethereum/RIPs',
+    api_type: 'github_api',
+    poll_interval_s: 14400,
+    default_category: 'EIP_ERC',
+  },
+  {
+    id: 'github.com/eth-infinitism/account-abstraction',
+    display_name: 'ERC-4337 Account Abstraction',
+    base_url: 'https://github.com/eth-infinitism/account-abstraction',
+    api_type: 'github_api',
+    poll_interval_s: 14400,
+    default_category: 'EIP_ERC',
+  },
+  {
+    id: 'github.com/foundry-rs/foundry',
+    display_name: 'Foundry (Forge/Cast/Anvil)',
+    base_url: 'https://github.com/foundry-rs/foundry',
+    api_type: 'rss',
+    poll_interval_s: 1800,
+    default_category: 'UPGRADE',
+  },
+];
+
+// ── Tier 12: Research & Security Blogs (RSS) ─────────────────────────────
+
+export const TIER_12_RESEARCH_RSS: SourceDefinition[] = [
+  {
+    id: 'joncharbonneau.substack.com',
+    display_name: 'Jon Charbonneau — Protocol Research',
+    base_url: 'https://joncharbonneau.substack.com',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'RESEARCH',
+  },
+  {
+    id: 'blog.trailofbits.com',
+    display_name: 'Trail of Bits Blog',
+    base_url: 'https://blog.trailofbits.com',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'blog.openzeppelin.com',
+    display_name: 'OpenZeppelin Blog',
+    base_url: 'https://blog.openzeppelin.com',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'nethermind.io/blog',
+    display_name: 'Nethermind Blog',
+    base_url: 'https://nethermind.io/blog',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'RESEARCH',
+  },
+];
+
 // ── All Sources ────────────────────────────────────────────────────────
 
 export const ALL_SOURCES: SourceDefinition[] = [
@@ -320,4 +505,9 @@ export const ALL_SOURCES: SourceDefinition[] = [
   ...TIER_5_SOURCES,
   ...TIER_6_SOURCES,
   ...TIER_7_SOURCES,
+  ...TIER_8_DEFI_GOVERNANCE,
+  ...TIER_9_L2_GOVERNANCE,
+  ...TIER_10_MEV,
+  ...TIER_11_STANDARDS,
+  ...TIER_12_RESEARCH_RSS,
 ];

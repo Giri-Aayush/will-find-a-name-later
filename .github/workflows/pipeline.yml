@@ -1,14 +1,14 @@
-name: Pipeline - High Frequency (30m)
+name: Pipeline - All Sources (6h)
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 jobs:
   pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -20,9 +20,13 @@ jobs:
 
       - run: npm ci
 
-      - name: Run pipeline for high-frequency sources (30m interval)
-        run: npm run pipeline -- --sources=rss --max-interval=1800
+      - name: Fetch & process all sources
+        run: npm run pipeline
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GITHUB_PAT: ${{ secrets.GH_PAT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CRYPTOPANIC_API_KEY: ${{ secrets.CRYPTOPANIC_API_KEY }}
           PIPELINE_VERSION: '0.1.0'

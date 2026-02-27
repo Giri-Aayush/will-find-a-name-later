@@ -11,11 +11,14 @@ export interface CardQueryParams {
 export async function getCards(params: CardQueryParams = {}): Promise<Card[]> {
   const { cursor, limit = 20, category, source } = params;
 
+  // Fresh content first (published_at DESC), with fetched_at as tiebreaker.
+  // No hard cutoff — older cards load naturally as the user scrolls.
   let query = supabase
     .from('cards')
     .select('*')
     .eq('is_suspended', false)
     .order('published_at', { ascending: false })
+    .order('fetched_at', { ascending: false })
     .limit(limit);
 
   if (cursor) {
@@ -97,6 +100,7 @@ export async function getPersonalizedCards(
     p_category: category ?? null,
     p_cursor_seen: cursorSeen ?? null,
     p_cursor_published: cursorPublished ?? null,
+    p_max_age_days: 365,
   });
 
   if (error) throw new Error(`Failed to fetch personalized feed: ${error.message}`);
