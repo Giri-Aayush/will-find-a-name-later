@@ -30,22 +30,13 @@ export function Card({ card }: CardProps) {
 
   const { isSignedIn } = useUser();
   const clerk = useClerk();
-  const { isSaved, toggleSave, init, initialized } = useSaved();
-  const { getUserReaction, getCounts, react, fetchForCards } = useReactions();
+  const { isSaved, toggleSave, initialized } = useSaved();
+  const { getUserReaction, getCounts, react } = useReactions();
   const saved = initialized && isSaved(card.id);
   const userReaction = getUserReaction(card.id);
   const counts = getCounts(card.id);
   const badgeClass = CATEGORY_BADGE_CLASS[card.category] ?? 'badge-research';
   const categoryLabel = CATEGORY_LABELS[card.category] ?? card.category;
-
-  useEffect(() => {
-    if (isSignedIn) init();
-  }, [isSignedIn, init]);
-
-  // Fetch reactions for this card
-  useEffect(() => {
-    fetchForCards([card.id]);
-  }, [card.id, fetchForCards]);
 
   // Auto-dismiss thank you after 3s
   useEffect(() => {

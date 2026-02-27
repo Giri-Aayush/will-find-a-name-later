@@ -1,5 +1,5 @@
 const WINDOW_MS = 60_000;
-const MAX_REQUESTS = 60;
+const MAX_REQUESTS = 300;
 
 const ipRequestMap = new Map<string, { count: number; resetAt: number }>();
 

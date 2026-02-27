@@ -13,6 +13,8 @@ interface SavedState {
   reset: () => void;
 }
 
+let initPromise: Promise<void> | null = null;
+
 export const useSaved = create<SavedState>((set, get) => ({
   savedIds: new Set(),
   savedCards: [],
@@ -20,23 +22,30 @@ export const useSaved = create<SavedState>((set, get) => ({
 
   init: async () => {
     if (get().initialized) return;
-    try {
-      const res = await fetch('/api/saved');
-      if (!res.ok) {
-        // Not signed in or error — just mark initialized with empty
-        set({ initialized: true });
-        return;
-      }
-      const { saved } = await res.json();
-      const cards = (saved ?? []).map((s: { cards: Card }) => s.cards).filter(Boolean);
-      set({
-        savedCards: cards,
-        savedIds: new Set(cards.map((c: Card) => c.id)),
-        initialized: true,
-      });
-    } catch {
-      set({ initialized: true });
+    // Deduplicate concurrent init calls into a single fetch
+    if (!initPromise) {
+      initPromise = (async () => {
+        try {
+          const res = await fetch('/api/saved');
+          if (!res.ok) {
+            set({ initialized: true });
+            return;
+          }
+          const { saved } = await res.json();
+          const cards = (saved ?? []).map((s: { cards: Card }) => s.cards).filter(Boolean);
+          set({
+            savedCards: cards,
+            savedIds: new Set(cards.map((c: Card) => c.id)),
+            initialized: true,
+          });
+        } catch {
+          set({ initialized: true });
+        } finally {
+          initPromise = null;
+        }
+      })();
     }
+    return initPromise;
   },
 
   toggleSave: async (cardId: string) => {

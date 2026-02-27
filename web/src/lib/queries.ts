@@ -67,6 +67,59 @@ function interleaveBySource(cards: Card[]): Card[] {
   return result;
 }
 
+// ── Personalized feed ──
+
+export interface PersonalizedCardQueryParams {
+  userId: string;
+  limit?: number;
+  category?: string;
+  cursorSeen?: boolean;
+  cursorPublished?: string;
+}
+
+export interface PersonalizedCard extends Card {
+  seen: boolean;
+}
+
+export interface PersonalizedResult {
+  cards: PersonalizedCard[];
+  unseenCount: number;
+}
+
+export async function getPersonalizedCards(
+  params: PersonalizedCardQueryParams,
+): Promise<PersonalizedResult> {
+  const { userId, limit = 20, category, cursorSeen, cursorPublished } = params;
+
+  const { data, error } = await supabase.rpc('get_personalized_feed', {
+    p_user_id: userId,
+    p_limit: limit,
+    p_category: category ?? null,
+    p_cursor_seen: cursorSeen ?? null,
+    p_cursor_published: cursorPublished ?? null,
+  });
+
+  if (error) throw new Error(`Failed to fetch personalized feed: ${error.message}`);
+
+  const raw = (data ?? []) as PersonalizedCard[];
+
+  // Interleave within each zone separately to preserve unseen-first ordering
+  const unseen = raw.filter((c) => !c.seen);
+  const seen = raw.filter((c) => c.seen);
+
+  const interleavedUnseen = interleaveBySource(unseen) as PersonalizedCard[];
+  const interleavedSeen = interleaveBySource(seen) as PersonalizedCard[];
+
+  // Re-attach seen flag (interleaveBySource doesn't strip it, but be explicit)
+  const seenIds = new Set(seen.map((c) => c.id));
+  const cards = [...interleavedUnseen, ...interleavedSeen];
+  for (const card of cards) {
+    card.seen = seenIds.has(card.id);
+  }
+
+  return { cards, unseenCount: unseen.length };
+}
+
 export async function getCardById(id: string): Promise<Card | null> {
   const { data, error } = await supabase
     .from('cards')

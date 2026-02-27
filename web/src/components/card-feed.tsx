@@ -1,17 +1,21 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/nextjs';
 import type { Card as CardType } from '@ethpulse/shared';
 import { Card } from './card';
 import { capture } from '@/lib/posthog';
+import { useReactions } from '@/stores/reactions';
+import { useSaved } from '@/stores/saved';
 
 interface CardFeedProps {
-  initialCards: CardType[];
+  initialCards: (CardType & { seen?: boolean })[];
+  personalized?: boolean;
+  initialUnseenCount?: number;
 }
 
-export function CardFeed({ initialCards }: CardFeedProps) {
-  const [cards, setCards] = useState<CardType[]>(initialCards);
+export function CardFeed({ initialCards, personalized, initialUnseenCount }: CardFeedProps) {
+  const [cards, setCards] = useState<(CardType & { seen?: boolean })[]>(initialCards);
   const [hasMore, setHasMore] = useState(initialCards.length === 20);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -19,7 +23,23 @@ export function CardFeed({ initialCards }: CardFeedProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
+  const [totalUnseenCount, setTotalUnseenCount] = useState(initialUnseenCount ?? 0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // ── Batch fetch reactions + saved (once per card set, not per card) ──
+  const { fetchForCards } = useReactions();
+  const { init: initSaved } = useSaved();
+  const { isSignedIn } = useUser();
+
+  useEffect(() => {
+    if (cards.length > 0) {
+      fetchForCards(cards.map(c => c.id));
+    }
+  }, [cards, fetchForCards]);
+
+  useEffect(() => {
+    if (isSignedIn) initSaved();
+  }, [isSignedIn, initSaved]);
 
   // First-time swipe hint
   useEffect(() => {
@@ -43,16 +63,62 @@ export function CardFeed({ initialCards }: CardFeedProps) {
     return () => container.removeEventListener('scroll', onScroll);
   }, [showSwipeHint]);
 
+  // ── Batch view recording (personalized mode only) ──
+  const pendingViewsRef = useRef<Set<string>>(new Set());
+  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flushViews = useCallback(() => {
+    if (!personalized || pendingViewsRef.current.size === 0) return;
+    const ids = [...pendingViewsRef.current];
+    pendingViewsRef.current.clear();
+
+    fetch('/api/card-views', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ card_ids: ids }),
+    }).catch(() => {
+      // On failure, re-add to pending for next flush
+      for (const id of ids) pendingViewsRef.current.add(id);
+    });
+  }, [personalized]);
+
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    flushTimerRef.current = setTimeout(flushViews, 3000);
+  }, [flushViews]);
+
+  // Flush on page hide / unmount
+  useEffect(() => {
+    if (!personalized) return;
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') flushViews();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      flushViews();
+    };
+  }, [personalized, flushViews]);
+
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
     setLoading(true);
     setError(false);
 
     try {
-      const lastCard = cards[cards.length - 1];
       const params = new URLSearchParams();
-      if (lastCard) params.set('cursor', lastCard.published_at);
       if (category) params.set('category', category);
+
+      if (personalized && cards.length > 0) {
+        // Composite cursor for personalized feed
+        const lastCard = cards[cards.length - 1] as CardType & { seen?: boolean };
+        params.set('cursor_seen', String(!!lastCard.seen));
+        params.set('cursor_published', lastCard.published_at);
+      } else if (!personalized && cards.length > 0) {
+        // Standard cursor for anonymous feed
+        const lastCard = cards[cards.length - 1];
+        params.set('cursor', lastCard.published_at);
+      }
 
       const res = await fetch(`/api/cards?${params}`);
       if (!res.ok) throw new Error();
@@ -60,12 +126,16 @@ export function CardFeed({ initialCards }: CardFeedProps) {
 
       setCards(prev => [...prev, ...data.cards]);
       setHasMore(data.hasMore);
+
+      if (personalized && data.unseenCount !== undefined) {
+        setTotalUnseenCount(prev => prev + data.unseenCount);
+      }
     } catch {
       setError(true);
     } finally {
       setLoading(false);
     }
-  }, [cards, hasMore, loading, category]);
+  }, [cards, hasMore, loading, category, personalized]);
 
   // Track viewed card IDs to avoid duplicate events
   const viewedRef = useRef(new Set<string>());
@@ -96,6 +166,12 @@ export function CardFeed({ initialCards }: CardFeedProps) {
                 category: card.category,
                 position: idx,
               });
+
+              // Record view persistently for personalized feed
+              if (personalized) {
+                pendingViewsRef.current.add(card.id);
+                scheduleFlush();
+              }
             }
 
             // Start dwell timer
@@ -125,7 +201,7 @@ export function CardFeed({ initialCards }: CardFeedProps) {
     const items = container.querySelectorAll('[data-index]');
     items.forEach(item => observer.observe(item));
     return () => observer.disconnect();
-  }, [cards, loadMore]);
+  }, [cards, loadMore, personalized, scheduleFlush]);
 
   // Pull-to-refresh
   const touchStartY = useRef<number | null>(null);
@@ -153,6 +229,9 @@ export function CardFeed({ initialCards }: CardFeedProps) {
           setCards(data.cards);
           setHasMore(data.hasMore);
           setCurrentIndex(0);
+          if (personalized && data.unseenCount !== undefined) {
+            setTotalUnseenCount(data.unseenCount);
+          }
           containerRef.current?.scrollTo({ top: 0 });
         }
       } catch {
@@ -161,7 +240,7 @@ export function CardFeed({ initialCards }: CardFeedProps) {
         setRefreshing(false);
       }
     }
-  }, [category, refreshing]);
+  }, [category, refreshing, personalized]);
 
   const handleCategoryChange = useCallback(async (newCategory: string | null) => {
     setCategory(newCategory);
@@ -179,6 +258,9 @@ export function CardFeed({ initialCards }: CardFeedProps) {
 
       setCards(data.cards);
       setHasMore(data.hasMore);
+      if (personalized && data.unseenCount !== undefined) {
+        setTotalUnseenCount(data.unseenCount);
+      }
       containerRef.current?.scrollTo({ top: 0 });
     } catch {
       setCards([]);
@@ -186,12 +268,15 @@ export function CardFeed({ initialCards }: CardFeedProps) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [personalized]);
 
   function scrollToTop() {
     containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     setCurrentIndex(0);
   }
+
+  // Show "all caught up" divider when there are both unseen and seen cards
+  const showCaughtUp = personalized && totalUnseenCount > 0 && totalUnseenCount < cards.length;
 
   return (
     <div className="fixed inset-0 flex flex-col" style={{ background: 'var(--bg-deep)' }}>
@@ -269,23 +354,49 @@ export function CardFeed({ initialCards }: CardFeedProps) {
         onTouchEnd={handleTouchEnd}
       >
         {cards.map((card, idx) => (
-          <div key={card.id} data-index={idx} className="snap-item h-full">
-            <Card card={card} />
-            {/* Swipe hint on first card */}
-            {idx === 0 && showSwipeHint && (
-              <div
-                className="absolute bottom-20 left-0 right-0 flex flex-col items-center gap-1 animate-in"
-                style={{ pointerEvents: 'none' }}
-              >
-                <span className="text-[10px] tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>
-                  swipe up for more
-                </span>
-                <span className="text-lg animate-in" style={{ color: 'var(--text-muted)', animationDelay: '0.3s' }}>
-                  ↑
-                </span>
+          <Fragment key={card.id}>
+            {/* "All caught up" divider between unseen and seen */}
+            {showCaughtUp && idx === totalUnseenCount && (
+              <div className="snap-item h-full flex items-center justify-center">
+                <div className="text-center space-y-3 px-8">
+                  <div
+                    className="text-sm font-medium tracking-widest uppercase"
+                    style={{ color: 'var(--accent-green)' }}
+                  >
+                    [all caught up]
+                  </div>
+                  <div
+                    className="text-[10px] tracking-wider uppercase"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
+                    you&apos;ve seen everything above — older cards below
+                  </div>
+                  <div className="flex items-center gap-2 mt-4 justify-center" style={{ color: 'var(--text-muted)' }}>
+                    <div className="h-px w-12" style={{ background: 'var(--border-medium)' }} />
+                    <span className="text-[9px] tracking-widest uppercase">archive</span>
+                    <div className="h-px w-12" style={{ background: 'var(--border-medium)' }} />
+                  </div>
+                </div>
               </div>
             )}
-          </div>
+            <div data-index={idx} className="snap-item h-full">
+              <Card card={card} />
+              {/* Swipe hint on first card */}
+              {idx === 0 && showSwipeHint && (
+                <div
+                  className="absolute bottom-20 left-0 right-0 flex flex-col items-center gap-1 animate-in"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  <span className="text-[10px] tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>
+                    swipe up for more
+                  </span>
+                  <span className="text-lg animate-in" style={{ color: 'var(--text-muted)', animationDelay: '0.3s' }}>
+                    ↑
+                  </span>
+                </div>
+              )}
+            </div>
+          </Fragment>
         ))}
 
         {loading && (
