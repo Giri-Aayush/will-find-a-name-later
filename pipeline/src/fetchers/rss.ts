@@ -1,7 +1,7 @@
 import RssParser from 'rss-parser';
 import * as cheerio from 'cheerio';
 import { BaseFetcher } from './base.js';
-import type { FetchResult } from '@ethpulse/shared';
+import type { FetchResult } from '@hexcast/shared';
 import { logger } from '../utils/logger.js';
 
 const parser = new RssParser();
@@ -36,7 +36,17 @@ const RSS_FEEDS: Record<string, string> = {
   // Tier 12 — Research & security blogs (RSS)
   'joncharbonneau.substack.com': 'https://joncharbonneau.substack.com/feed',
   'blog.trailofbits.com': 'https://blog.trailofbits.com/feed/',
-  'nethermind.io/blog': 'https://nethermind.io/blog/feed/',
+  'www.openzeppelin.com': 'https://www.openzeppelin.com/news/rss.xml',
+  // Tier 13 — Research, security & protocol blogs II
+  'blog.sigmaprime.io': 'https://blog.sigmaprime.io/feeds/all.atom.xml',
+  'blog.lido.fi': 'https://blog.lido.fi/rss/',
+  'blog.chain.link': 'https://blog.chain.link/feed/',
+  'medium.com/immunefi': 'https://medium.com/feed/immunefi',
+  'offchain.medium.com': 'https://offchain.medium.com/feed',
+  'www.theblock.co': 'https://www.theblock.co/rss.xml',
+  // Tier 14 — Smart contract language releases
+  'github.com/ethereum/solidity': 'https://github.com/ethereum/solidity/releases.atom',
+  'github.com/vyperlang/vyper': 'https://github.com/vyperlang/vyper/releases.atom',
   // P1 high-signal sources with RSS
   'writings.flashbots.net': 'https://writings.flashbots.net/rss.xml',
   'samczsun.com': 'https://samczsun.com/rss/',

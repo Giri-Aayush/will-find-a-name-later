@@ -6,15 +6,16 @@ import { FeedbackWidget } from '@/components/feedback-widget';
 import { ToastProvider } from '@/components/toast';
 import { PostHogProvider } from '@/components/posthog-provider';
 import { InstallPrompt } from '@/components/install-prompt';
+import { SpotlightTour } from '@/components/spotlight-tour';
 
 export const metadata: Metadata = {
-  title: 'EthPulse',
+  title: 'Hexcast',
   description: 'Ethereum ecosystem intelligence in 60-word cards.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'EthPulse',
+    title: 'Hexcast',
   },
 };
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <BottomNav />
             <FeedbackWidget />
             <InstallPrompt />
+            <SpotlightTour />
             <ToastProvider />
           </PostHogProvider>
         </body>

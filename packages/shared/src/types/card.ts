@@ -32,6 +32,7 @@ export interface RawItem {
   raw_title: string | null;
   raw_text: string | null;
   raw_metadata: Record<string, unknown> | null;
+  published_at: string | null;
   fetched_at: string;
   processed: boolean;
 }

@@ -1,4 +1,4 @@
-import type { FetchResult, FetcherConfig } from '@ethpulse/shared';
+import type { FetchResult, FetcherConfig } from '@hexcast/shared';
 
 export abstract class BaseFetcher {
   protected config: FetcherConfig;

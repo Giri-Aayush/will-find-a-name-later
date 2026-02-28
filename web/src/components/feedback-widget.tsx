@@ -45,9 +45,11 @@ export function FeedbackWidget() {
         toast('Thanks for the feedback');
         setMessage('');
         setOpen(false);
+      } else {
+        toast('Failed to send — try again');
       }
     } catch {
-      // Silently fail
+      toast('Failed to send — try again');
     } finally {
       setSubmitting(false);
     }
@@ -62,7 +64,7 @@ export function FeedbackWidget() {
           className="fixed z-40 text-[10px] font-medium tracking-widest uppercase btn-neon"
           style={{
             bottom: 'calc(60px + max(0.5rem, env(safe-area-inset-bottom)))',
-            left: '16px',
+            right: '16px',
             color: 'var(--text-muted)',
             border: '1px solid var(--border-subtle)',
             padding: '6px 10px',

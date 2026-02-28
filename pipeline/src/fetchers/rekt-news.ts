@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import { BaseFetcher } from './base.js';
-import type { FetchResult } from '@ethpulse/shared';
+import type { FetchResult } from '@hexcast/shared';
 import { logger } from '../utils/logger.js';
 
 /**
@@ -16,7 +16,7 @@ export class RektNewsFetcher extends BaseFetcher {
 
     try {
       const response = await fetch(this.config.baseUrl, {
-        headers: { 'User-Agent': 'EthPulse/1.0 (news aggregator)' },
+        headers: { 'User-Agent': 'Hexcast/1.0 (news aggregator)' },
       });
 
       if (!response.ok) {

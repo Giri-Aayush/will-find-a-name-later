@@ -1,10 +1,10 @@
-import type { Category } from './categories.js';
+import type { Category } from './categories';
 
 export interface SourceDefinition {
   id: string;
   display_name: string;
   base_url: string;
-  api_type: 'discourse' | 'github_api' | 'rss' | 'graphql' | 'html_scraper' | 'rest_api' | 'cryptopanic' | 'crypto_news_api' | 'rekt_scraper' | 'paradigm_scraper' | 'hackmd_scraper';
+  api_type: 'discourse' | 'github_api' | 'rss' | 'graphql' | 'html_scraper' | 'nethermind_scraper' | 'rest_api' | 'cryptopanic' | 'crypto_news_api' | 'rekt_scraper' | 'paradigm_scraper' | 'hackmd_scraper';
   poll_interval_s: number;
   default_category: Category;
 }
@@ -495,20 +495,94 @@ export const TIER_12_RESEARCH_RSS: SourceDefinition[] = [
     default_category: 'SECURITY',
   },
   {
-    id: 'blog.openzeppelin.com',
-    display_name: 'OpenZeppelin Blog',
-    base_url: 'https://blog.openzeppelin.com',
+    id: 'www.openzeppelin.com',
+    display_name: 'OpenZeppelin — Security & Research',
+    base_url: 'https://www.openzeppelin.com',
     api_type: 'rss',
     poll_interval_s: 7200,
     default_category: 'SECURITY',
   },
   {
-    id: 'nethermind.io/blog',
+    id: 'www.nethermind.io',
     display_name: 'Nethermind Blog',
-    base_url: 'https://nethermind.io/blog',
-    api_type: 'rss',
+    base_url: 'https://www.nethermind.io',
+    api_type: 'nethermind_scraper',
     poll_interval_s: 7200,
     default_category: 'RESEARCH',
+  },
+];
+
+// ── Tier 13: Research, Security & Protocol Blogs II (RSS) ─────────────────
+
+export const TIER_13_BLOGS: SourceDefinition[] = [
+  {
+    id: 'blog.sigmaprime.io',
+    display_name: 'Sigma Prime Blog',
+    base_url: 'https://blog.sigmaprime.io',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'blog.lido.fi',
+    display_name: 'Lido Finance Blog',
+    base_url: 'https://blog.lido.fi',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'blog.chain.link',
+    display_name: 'Chainlink Blog',
+    base_url: 'https://blog.chain.link',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'medium.com/immunefi',
+    display_name: 'Immunefi — Bug Bounty Reports',
+    base_url: 'https://medium.com/immunefi',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'offchain.medium.com',
+    display_name: 'Offchain Labs (Arbitrum)',
+    base_url: 'https://offchain.medium.com',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'www.theblock.co',
+    display_name: 'The Block — Crypto News',
+    base_url: 'https://www.theblock.co',
+    api_type: 'rss',
+    poll_interval_s: 3600,
+    default_category: 'ANNOUNCEMENT',
+  },
+];
+
+// ── Tier 14: Smart Contract Language Releases (Atom/RSS) ──────────────────
+
+export const TIER_14_LANGUAGE_RELEASES: SourceDefinition[] = [
+  {
+    id: 'github.com/ethereum/solidity',
+    display_name: 'Solidity Compiler Releases',
+    base_url: 'https://github.com/ethereum/solidity',
+    api_type: 'rss',
+    poll_interval_s: 1800,
+    default_category: 'UPGRADE',
+  },
+  {
+    id: 'github.com/vyperlang/vyper',
+    display_name: 'Vyper Compiler Releases',
+    base_url: 'https://github.com/vyperlang/vyper',
+    api_type: 'rss',
+    poll_interval_s: 1800,
+    default_category: 'UPGRADE',
   },
 ];
 
@@ -573,5 +647,29 @@ export const ALL_SOURCES: SourceDefinition[] = [
   ...TIER_10_MEV,
   ...TIER_11_STANDARDS,
   ...TIER_12_RESEARCH_RSS,
+  ...TIER_13_BLOGS,
+  ...TIER_14_LANGUAGE_RELEASES,
   ...P1_HIGH_SIGNAL,
 ];
+
+// ── Source Quality Rankings ─────────────────────────────────────────────
+// S = core protocol + top researchers, A = clients/standards/security,
+// B = governance/blogs, C = aggregators/social
+
+export type QualityGrade = 'S' | 'A' | 'B' | 'C';
+
+const GRADE_MAP: [QualityGrade, SourceDefinition[]][] = [
+  ['S', [...TIER_1_SOURCES, ...P1_HIGH_SIGNAL]],
+  ['A', [...TIER_2_SOURCES, ...TIER_5_SOURCES, ...TIER_10_MEV, ...TIER_11_STANDARDS, ...TIER_12_RESEARCH_RSS, ...TIER_14_LANGUAGE_RELEASES]],
+  ['B', [...TIER_3_SOURCES, ...TIER_6_SOURCES, ...TIER_8_DEFI_GOVERNANCE, ...TIER_13_BLOGS]],
+  ['C', [...TIER_7_SOURCES, ...TIER_9_L2_GOVERNANCE]],
+];
+
+export const SOURCE_QUALITY: Record<string, QualityGrade> = {};
+for (const [grade, sources] of GRADE_MAP) {
+  for (const src of sources) {
+    SOURCE_QUALITY[src.id] = grade;
+  }
+}
+
+export const GRADE_SORT_ORDER: Record<QualityGrade, number> = { S: 0, A: 1, B: 2, C: 3 };

@@ -27,6 +27,6 @@ export const usePreferences = create<PreferencesState>()(
       setFilterSource: (sourceId) => set({ filterSource: sourceId }),
       isSourceHidden: (sourceId) => get().hiddenSources.includes(sourceId),
     }),
-    { name: 'ethpulse-preferences' }
+    { name: 'hexcast-preferences' }
   )
 );

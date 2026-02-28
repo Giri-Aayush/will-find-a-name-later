@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useUser, useClerk } from '@clerk/nextjs';
-import type { Card as CardType } from '@ethpulse/shared';
+import type { Card as CardType } from '@hexcast/shared';
 import { relativeTime, extractDomain, CATEGORY_LABELS, CATEGORY_BADGE_CLASS } from '@/lib/utils';
 import { useSaved } from '@/stores/saved';
 import { useReactions } from '@/stores/reactions';
@@ -54,7 +54,7 @@ export function Card({ card }: CardProps) {
 
   function shareOnX(e: React.MouseEvent) {
     e.stopPropagation();
-    const text = `${card.headline}\n\n[${categoryLabel}] via EthPulse`;
+    const text = `${card.headline}\n\n[${categoryLabel}] via Hexcast`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(cardUrl)}`;
     window.open(url, '_blank', 'noopener');
     capture('card_shared', { card_id: card.id, platform: 'x' });
@@ -107,14 +107,20 @@ export function Card({ card }: CardProps) {
   }
 
   async function submitFlag() {
-    await fetch('/api/flags', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ card_id: card.id, reason: flagReason }),
-    });
-    setFlagged(true);
-    setFlagStep('done');
-    capture('card_flagged', { card_id: card.id, reason: flagReason });
+    try {
+      const res = await fetch('/api/flags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ card_id: card.id, reason: flagReason }),
+      });
+      if (!res.ok) throw new Error('Failed');
+      setFlagged(true);
+      setFlagStep('done');
+      capture('card_flagged', { card_id: card.id, reason: flagReason });
+    } catch {
+      toast('Failed to flag — try again');
+      setFlagStep('idle');
+    }
   }
 
   // ── Reaction handler ──
@@ -143,7 +149,7 @@ export function Card({ card }: CardProps) {
     }
     if (!isSignedIn) return;
     try {
-      const nowSaved = await toggleSave(card.id);
+      const nowSaved = await toggleSave(card.id, card);
       capture(nowSaved ? 'card_saved' : 'card_unsaved', { card_id: card.id });
       toast(nowSaved ? 'Saved' : 'Removed from saved');
     } catch {
@@ -216,7 +222,7 @@ export function Card({ card }: CardProps) {
       </div>
 
       {/* ── Main: Headline + Summary ── */}
-      <div className="flex-1 flex flex-col justify-center min-h-0 py-5 animate-in animate-delay-2 relative z-1">
+      <div className="card-summary flex-1 flex flex-col justify-center min-h-0 py-5 animate-in animate-delay-2 relative z-1">
         {/* Terminal-style decorative divider */}
         <div className="flex items-center gap-2 mb-4" style={{ color: 'var(--text-muted)' }}>
           <div className="h-px flex-1" style={{ background: 'var(--border-medium)' }} />
@@ -315,7 +321,7 @@ export function Card({ card }: CardProps) {
 
       {/* ── Bottom: Read Source + Reactions (single row) ── */}
       <div
-        className="shrink-0 pt-4 pb-14 animate-in animate-delay-3 relative z-1"
+        className="card-actions shrink-0 pt-4 pb-14 animate-in animate-delay-3 relative z-1"
         style={{ borderTop: '1px solid var(--border-medium)' }}
       >
         <div className="flex items-center">

@@ -1,6 +1,6 @@
 {
-  "name": "EthPulse",
-  "short_name": "EthPulse",
+  "name": "Hexcast",
+  "short_name": "Hexcast",
   "description": "Ethereum ecosystem intelligence in 60-word cards.",
   "start_url": "/?utm_source=pwa",
   "display": "standalone",

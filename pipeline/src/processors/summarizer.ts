@@ -27,7 +27,7 @@ function createClient(): { client: OpenAI; model: string; mode: 'prod' | 'dev' }
 // ── Prompts (from PROMPT.md benchmarks) ─────────────────────────────────
 
 // V1 — Best for Ollama (score 81.9, 100% word count compliance)
-const SYSTEM_PROMPT_V1 = `You write 60-word news cards for EthPulse, an Ethereum ecosystem digest read by
+const SYSTEM_PROMPT_V1 = `You write 60-word news cards for Hexcast, an Ethereum ecosystem digest read by
 protocol developers and DeFi professionals. Write like Inshorts: factual, punchy,
 zero filler. Every word earns its place.`;
 
@@ -47,7 +47,7 @@ ${content}`;
 }
 
 // V1.3 — Best for GPT-4.1 Mini (score 68.3, 88.6% entity preservation)
-const SYSTEM_PROMPT_V13 = `You write 60-word news cards for EthPulse, an Ethereum ecosystem digest read by
+const SYSTEM_PROMPT_V13 = `You write 60-word news cards for Hexcast, an Ethereum ecosystem digest read by
 protocol developers and DeFi professionals. Write like Inshorts: factual, punchy,
 zero filler. Every word earns its place.
 

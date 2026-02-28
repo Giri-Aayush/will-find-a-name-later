@@ -41,7 +41,7 @@ async function main() {
   const sourceFilter = parseSourceFilter(process.argv);
   const intervalFilter = parseIntervalFilter(process.argv);
 
-  logger.info(`EthPulse Pipeline v${config.pipelineVersion}`);
+  logger.info(`Hexcast Pipeline v${config.pipelineVersion}`);
   logger.info(`Source filter: ${sourceFilter ?? 'all'}`);
   if (intervalFilter.min || intervalFilter.max) {
     logger.info(`Interval filter: min=${intervalFilter.min ?? '-'} max=${intervalFilter.max ?? '-'}`);

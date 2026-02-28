@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import { BaseFetcher } from './base.js';
-import type { FetchResult } from '@ethpulse/shared';
+import type { FetchResult } from '@hexcast/shared';
 import { logger } from '../utils/logger.js';
 
 interface ParadigmPost {
@@ -24,7 +24,7 @@ export class ParadigmFetcher extends BaseFetcher {
 
     try {
       const response = await fetch(`${this.config.baseUrl}/writing`, {
-        headers: { 'User-Agent': 'EthPulse/1.0 (news aggregator)' },
+        headers: { 'User-Agent': 'Hexcast/1.0 (news aggregator)' },
       });
 
       if (!response.ok) {

@@ -1,6 +1,9 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { checkUserRateLimit } from '@/lib/rate-limit';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function GET() {
   const { userId } = await auth();
@@ -27,11 +30,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { card_id } = body;
+  // Per-user rate limit: 30 saves per minute
+  const rl = checkUserRateLimit(userId, 'saved', 30, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+  }
 
-  if (!card_id || typeof card_id !== 'string') {
-    return NextResponse.json({ error: 'card_id is required' }, { status: 400 });
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  const { card_id } = body as { card_id?: string };
+
+  if (!card_id || typeof card_id !== 'string' || !UUID_RE.test(card_id)) {
+    return NextResponse.json({ error: 'Valid card_id is required' }, { status: 400 });
   }
 
   // Check if already saved

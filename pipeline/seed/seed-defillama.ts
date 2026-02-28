@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { TIER_6_SOURCES } from '@ethpulse/shared';
+import { TIER_6_SOURCES } from '@hexcast/shared';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;

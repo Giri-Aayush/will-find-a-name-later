@@ -10,7 +10,7 @@ import { classify } from '../src/processors/classifier.js';
 import { summarize } from '../src/processors/summarizer.js';
 import { hashUrl } from '../src/utils/hash.js';
 import { logger } from '../src/utils/logger.js';
-import type { RawItem, Category } from '@ethpulse/shared';
+import type { RawItem, Category } from '@hexcast/shared';
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!);
 

@@ -43,7 +43,7 @@ export default function OfflinePage() {
         }}
       >
         <span style={{ color: '#3b82f6', textShadow: '0 0 10px rgba(59,130,246,0.25)' }}>[</span>
-        EthPulse
+        Hexcast
         <span style={{ color: '#3b82f6', textShadow: '0 0 10px rgba(59,130,246,0.25)' }}>]</span>
       </div>
 

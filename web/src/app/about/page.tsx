@@ -1,6 +1,6 @@
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-lg px-5 py-6 pb-24">
+    <main className="px-5 md:px-10 lg:px-16 py-6 pb-24 h-dvh overflow-y-auto">
       <h1
         className="text-sm font-semibold tracking-widest uppercase mb-6"
         style={{ color: 'var(--text-primary)' }}
@@ -20,16 +20,16 @@ export default function AboutPage() {
           boxShadow: '0 0 20px rgba(59, 130, 246, 0.04)',
         }}
       >
-        <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[30]</span> sources</span>
+        <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[71]</span> sources</span>
         <span style={{ color: 'var(--text-muted)' }}>//</span>
         <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[8]</span> categories</span>
         <span style={{ color: 'var(--text-muted)' }}>//</span>
         <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[60]</span> word cards</span>
       </div>
 
-      {/* What is EthPulse */}
-      <Section title="what_is_ethpulse">
-        EthPulse aggregates, curates, and summarises information from across the
+      {/* What is Hexcast */}
+      <Section title="what_is_hexcast">
+        Hexcast aggregates, curates, and summarises information from across the
         Ethereum ecosystem and delivers it as a feed of 60-word story cards. Each
         card captures one event, proposal, decision, or development — enough context
         to understand what happened and why it matters.
@@ -37,10 +37,12 @@ export default function AboutPage() {
 
       {/* Data Sources */}
       <Section title="data_sources">
-        30 sources across 6 tiers: core protocol research (ethresear.ch, Ethereum
-        Magicians), EIP/ERC registries, All Core Devs project management, governance
-        forums (Optimism, Arbitrum, zkSync, Starknet, Uniswap), 10 Ethereum client
-        release feeds, community newsletters, and DefiLlama on-chain metrics.
+        71 sources across 14 tiers: core protocol research (ethresear.ch, Ethereum
+        Magicians), EIP/ERC registries, All Core Devs management, governance forums
+        (Optimism, Arbitrum, zkSync, Starknet, Uniswap, Aave, Lido, and more), 10
+        Ethereum client release feeds, security blogs (Trail of Bits, OpenZeppelin,
+        Sigma Prime, Rekt News), CryptoPanic trending, DefiLlama on-chain metrics,
+        and community newsletters.
       </Section>
 
       {/* How It Works */}
@@ -70,8 +72,24 @@ export default function AboutPage() {
       {/* Report */}
       <Section title="report_issue">
         See an inaccurate card? Tap the [!] flag button on any card to submit a
-        report. Flagged cards are reviewed within 24 hours.
+        report. Flagged cards are reviewed within 24 hours. For bugs or feature
+        requests, open an issue on GitHub.
       </Section>
+
+      <a
+        href="https://github.com/Giri-Aayush/will-find-a-name-later/issues/new"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-cta inline-flex items-center gap-2 mt-1 mb-8 px-4 py-2.5 text-[10px] font-medium uppercase tracking-widest"
+        style={{
+          border: '1px solid var(--accent)',
+          color: 'var(--accent)',
+          background: 'transparent',
+        }}
+      >
+        report an issue
+        <span className="text-[10px]">-&gt;</span>
+      </a>
 
       {/* Footer */}
       <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>

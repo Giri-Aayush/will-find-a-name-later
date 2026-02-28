@@ -34,11 +34,11 @@ function SavedCards() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
       {savedCards.map(card => (
         <div
           key={card.id}
-          className="card-ambient p-4"
+          className="card-ambient p-4 md:p-5"
           data-category={card.category}
           style={{
             border: '1px solid var(--border-medium)',
@@ -54,7 +54,7 @@ function SavedCards() {
 
 export default function SavedPage() {
   return (
-    <main className="mx-auto max-w-lg px-4 py-6 pb-24">
+    <main className="px-5 md:px-10 lg:px-16 py-6 pb-24 h-dvh overflow-y-auto">
       <h1
         className="text-sm font-semibold tracking-widest uppercase mb-6"
         style={{ color: 'var(--text-primary)' }}

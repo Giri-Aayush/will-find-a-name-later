@@ -164,7 +164,7 @@ export async function GET(request: NextRequest) {
               }}
             >
               <span style={{ color: '#3b82f6' }}>[</span>
-              EthPulse
+              Hexcast
               <span style={{ color: '#3b82f6' }}>]</span>
             </div>
             <span

@@ -1,5 +1,5 @@
 {
-  "name": "ethpulse",
+  "name": "hexcast",
   "private": true,
   "workspaces": [
     "packages/*",

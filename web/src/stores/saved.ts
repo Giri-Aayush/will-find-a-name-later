@@ -1,14 +1,14 @@
 'use client';
 
 import { create } from 'zustand';
-import type { Card } from '@ethpulse/shared';
+import type { Card } from '@hexcast/shared';
 
 interface SavedState {
   savedIds: Set<string>;
   savedCards: Card[];
   initialized: boolean;
   init: () => Promise<void>;
-  toggleSave: (cardId: string) => Promise<boolean>;
+  toggleSave: (cardId: string, card?: Card) => Promise<boolean>;
   isSaved: (cardId: string) => boolean;
   reset: () => void;
 }
@@ -48,7 +48,7 @@ export const useSaved = create<SavedState>((set, get) => ({
     return initPromise;
   },
 
-  toggleSave: async (cardId: string) => {
+  toggleSave: async (cardId: string, card?: Card) => {
     const res = await fetch('/api/saved', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -62,6 +62,9 @@ export const useSaved = create<SavedState>((set, get) => ({
     if (saved) {
       set(state => ({
         savedIds: new Set([...state.savedIds, cardId]),
+        savedCards: card && !state.savedCards.some(c => c.id === cardId)
+          ? [card, ...state.savedCards]
+          : state.savedCards,
       }));
     } else {
       set(state => ({

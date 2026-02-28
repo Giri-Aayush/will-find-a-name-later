@@ -1,12 +1,13 @@
 'use client';
 
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/nextjs';
-import type { Card as CardType } from '@ethpulse/shared';
+import type { Card as CardType } from '@hexcast/shared';
 import { Card } from './card';
 import { capture } from '@/lib/posthog';
 import { useReactions } from '@/stores/reactions';
 import { useSaved } from '@/stores/saved';
+import { usePreferences } from '@/stores/preferences';
 
 interface CardFeedProps {
   initialCards: (CardType & { seen?: boolean })[];
@@ -30,6 +31,14 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
   const { fetchForCards } = useReactions();
   const { init: initSaved } = useSaved();
   const { isSignedIn } = useUser();
+  const { hiddenSources } = usePreferences();
+
+  // Filter out cards from hidden sources
+  const hiddenSet = useMemo(() => new Set(hiddenSources), [hiddenSources]);
+  const visibleCards = useMemo(
+    () => cards.filter(c => !hiddenSet.has(c.source_id)),
+    [cards, hiddenSet],
+  );
 
   useEffect(() => {
     if (cards.length > 0) {
@@ -44,7 +53,7 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
   // First-time swipe hint
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const seen = localStorage.getItem('ethpulse-swipe-hint');
+    const seen = localStorage.getItem('hexcast-swipe-hint');
     if (!seen && initialCards.length > 0) {
       setShowSwipeHint(true);
     }
@@ -57,7 +66,7 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
     if (!container) return;
     const onScroll = () => {
       setShowSwipeHint(false);
-      localStorage.setItem('ethpulse-swipe-hint', '1');
+      localStorage.setItem('hexcast-swipe-hint', '1');
     };
     container.addEventListener('scroll', onScroll, { once: true });
     return () => container.removeEventListener('scroll', onScroll);
@@ -151,9 +160,9 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
 
           if (entry.isIntersecting) {
             setCurrentIndex(idx);
-            if (idx >= cards.length - 5) loadMore();
+            if (idx >= visibleCards.length - 5) loadMore();
 
-            const card = cards[idx];
+            const card = visibleCards[idx];
             if (card && !viewedRef.current.has(card.id)) {
               viewedRef.current.add(card.id);
               capture('card_viewed', {
@@ -172,7 +181,7 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
               dwellStartRef.current = { cardId: card.id, time: Date.now() };
             }
           } else {
-            const card = cards[idx];
+            const card = visibleCards[idx];
             if (card && dwellStartRef.current?.cardId === card.id) {
               const duration = Math.round((Date.now() - dwellStartRef.current.time) / 1000);
               if (duration >= 1) {
@@ -193,7 +202,7 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
     const items = container.querySelectorAll('[data-index]');
     items.forEach(item => observer.observe(item));
     return () => observer.disconnect();
-  }, [cards, loadMore, personalized, scheduleFlush]);
+  }, [visibleCards, loadMore, personalized, scheduleFlush]);
 
   // Pull-to-refresh
   const touchStartY = useRef<number | null>(null);
@@ -267,8 +276,12 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
     setCurrentIndex(0);
   }
 
-  const showCaughtUp = personalized && totalUnseenCount > 0 && totalUnseenCount < cards.length;
-  const progressPercent = cards.length > 0 ? ((currentIndex + 1) / cards.length) * 100 : 0;
+  const visibleUnseenCount = useMemo(
+    () => visibleCards.filter((c: CardType & { seen?: boolean }) => !c.seen).length,
+    [visibleCards],
+  );
+  const showCaughtUp = personalized && visibleUnseenCount > 0 && visibleUnseenCount < visibleCards.length;
+  const progressPercent = visibleCards.length > 0 ? ((currentIndex + 1) / visibleCards.length) * 100 : 0;
 
   return (
     <div className="fixed inset-0 flex flex-col" style={{ background: 'var(--bg-deep)' }}>
@@ -276,20 +289,21 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
       <header className="shrink-0 z-10 glass header-border">
         <div className="flex items-center justify-between px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2">
           <h1
+            id="hexcast-logo"
             className="text-sm font-semibold tracking-widest uppercase"
             style={{ color: 'var(--text-primary)' }}
           >
             <span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[</span>
-            EthPulse
+            Hexcast
             <span className="text-glow-accent" style={{ color: 'var(--accent)' }}>]</span>
           </h1>
           <div className="flex items-center gap-3">
-            {cards.length > 0 && (
+            {visibleCards.length > 0 && (
               <span
                 className="text-[10px] tabular-nums tracking-wider"
                 style={{ color: 'var(--text-muted)' }}
               >
-                {String(currentIndex + 1).padStart(2, '0')}/{String(cards.length).padStart(2, '0')}
+                {String(currentIndex + 1).padStart(2, '0')}/{String(visibleCards.length).padStart(2, '0')}
               </span>
             )}
             <SignedIn>
@@ -304,6 +318,7 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
             <SignedOut>
               <SignInButton mode="modal">
                 <button
+                  id="sign-in-button"
                   className="btn-neon text-[10px] font-medium tracking-widest uppercase px-3 py-1.5"
                   style={{
                     color: 'var(--accent)',
@@ -346,10 +361,10 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {cards.map((card, idx) => (
+        {visibleCards.map((card, idx) => (
           <Fragment key={card.id}>
             {/* "All caught up" divider between unseen and seen */}
-            {showCaughtUp && idx === totalUnseenCount && (
+            {showCaughtUp && idx === visibleUnseenCount && (
               <div className="snap-item h-full flex items-center justify-center">
                 <div className="text-center space-y-4 px-8">
                   <div
@@ -415,7 +430,7 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
           </div>
         )}
 
-        {!hasMore && cards.length > 0 && (
+        {!hasMore && visibleCards.length > 0 && (
           <div className="snap-item h-full flex items-center justify-center">
             <div className="text-center space-y-2">
               <div className="text-sm font-medium tracking-widest uppercase" style={{ color: 'var(--text-secondary)' }}>
@@ -428,7 +443,7 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
           </div>
         )}
 
-        {!loading && !error && cards.length === 0 && (
+        {!loading && !error && visibleCards.length === 0 && (
           <div className="h-full flex items-center justify-center">
             <div className="text-center space-y-2">
               <div className="text-[11px] tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>
@@ -522,7 +537,7 @@ function CategoryFilter({ active, onChange }: { active: string | null; onChange:
   };
 
   return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide px-5 pb-2.5">
+    <div id="category-filter" className="flex gap-2 overflow-x-auto scrollbar-hide px-5 pb-2.5">
       {categories.map(cat => {
         const isActive = active === cat;
         return (

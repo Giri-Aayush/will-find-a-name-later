@@ -1,4 +1,4 @@
-import type { EngagementMetrics } from '@ethpulse/shared';
+import type { EngagementMetrics } from '@hexcast/shared';
 
 /**
  * Source quality weights based on tier and signal reliability.
@@ -80,8 +80,8 @@ const SOURCE_QUALITY_WEIGHTS: Record<string, number> = {
   // Tier 12 — Research & Security Blogs
   'joncharbonneau.substack.com': 0.9,
   'blog.trailofbits.com': 0.95,
-  'blog.openzeppelin.com': 0.9,
-  'nethermind.io/blog': 0.85,
+  'www.openzeppelin.com': 0.9,
+  'www.nethermind.io': 0.85,
 
   // P1 — High-Signal Sources
   'rekt.news': 0.95,

@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { checkUserRateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -8,8 +9,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { message, page_url } = body;
+  // Per-user rate limit: 10 feedback per hour
+  const rl = checkUserRateLimit(userId, 'feedback', 10, 3_600_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  const { message, page_url } = body as { message?: string; page_url?: string };
 
   if (!message || typeof message !== 'string' || message.trim().length === 0) {
     return NextResponse.json({ error: 'message is required' }, { status: 400 });

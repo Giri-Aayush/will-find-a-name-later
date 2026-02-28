@@ -1,5 +1,5 @@
 import { supabase } from './client.js';
-import type { Card, Category, EngagementMetrics } from '@ethpulse/shared';
+import type { Card, Category, EngagementMetrics } from '@hexcast/shared';
 
 export interface CreateCardParams {
   sourceId: string;

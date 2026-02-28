@@ -19,13 +19,14 @@ export function BottomNav() {
         borderTop: '1px solid var(--border-medium)',
       }}
     >
-      <div className="mx-auto flex max-w-lg items-center justify-around pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex items-center justify-around pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {NAV_ITEMS.map(item => {
           const active = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
+              data-nav={item.label.toLowerCase()}
               className="btn-neon flex flex-col items-center justify-center gap-0.5 px-3 py-1"
               style={{
                 color: active ? 'var(--accent)' : 'var(--text-muted)',

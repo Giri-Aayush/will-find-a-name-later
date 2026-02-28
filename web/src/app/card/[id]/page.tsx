@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const card = await getCardById(id);
 
   if (!card) {
-    return { title: 'Card not found — EthPulse' };
+    return { title: 'Card not found — Hexcast' };
   }
 
   const categoryLabel = CATEGORY_LABELS[card.category] ?? card.category;
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogImageUrl = `/api/og?id=${id}`;
 
   return {
-    title: `${card.headline} — EthPulse`,
+    title: `${card.headline} — Hexcast`,
     description,
     openGraph: {
       title: card.headline,
@@ -60,7 +60,7 @@ export default async function CardPage({ params }: Props) {
       style={{ background: 'var(--bg-deep)' }}
     >
       <div
-        className="w-full max-w-lg"
+        className="w-full max-w-lg md:max-w-2xl"
         style={{ border: '1px solid var(--border-medium)', background: 'var(--bg-surface)' }}
       >
         {/* Header */}
@@ -76,7 +76,7 @@ export default async function CardPage({ params }: Props) {
             style={{ color: 'var(--text-primary)' }}
           >
             <span style={{ color: 'var(--accent)' }}>[</span>
-            EthPulse
+            Hexcast
             <span style={{ color: 'var(--accent)' }}>]</span>
           </span>
         </div>

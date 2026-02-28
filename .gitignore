@@ -15,7 +15,14 @@ web/tsconfig.tsbuildinfo
 
 # Research docs (not shipped)
 PD.md
+PROMPT.md
 RESEARCH.md
+SOURCES_RESEARCH.md
+SPOTLIGHT_TOUR.md
 COMPETITIVE_ANALYSIS.md
 MARKETING.md
-SOURCES_RESEARCH.md
+ADR_FEED_PIPELINE.md
+tone.md
+
+# Skills lockfile (local)
+skills-lock.json

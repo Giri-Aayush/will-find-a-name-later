@@ -1,5 +1,5 @@
 import { supabase } from './client.js';
-import type { FetchResult, RawItem } from '@ethpulse/shared';
+import type { FetchResult, RawItem } from '@hexcast/shared';
 
 export async function insertRawItem(result: FetchResult): Promise<void> {
   const { error } = await supabase
@@ -11,6 +11,7 @@ export async function insertRawItem(result: FetchResult): Promise<void> {
         raw_title: result.rawTitle,
         raw_text: result.rawText,
         raw_metadata: result.rawMetadata,
+        published_at: result.publishedAt?.toISOString() ?? null,
       },
       { onConflict: 'canonical_url' }
     );

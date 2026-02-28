@@ -1,4 +1,4 @@
-import type { Category } from '@ethpulse/shared';
+import type { Category } from '@hexcast/shared';
 
 const SOURCE_CATEGORY_MAP: Record<string, Category> = {
   // Tier 1 — Core Protocol

@@ -12,7 +12,7 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = withPWA({
-  transpilePackages: ['@ethpulse/shared'],
+  transpilePackages: ['@hexcast/shared'],
   outputFileTracingRoot: join(import.meta.dirname, '..'),
   async headers() {
     return [

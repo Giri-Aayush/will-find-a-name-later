@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 export default async function SourcesPage() {
   const sources = await getSources();
   return (
-    <main className="mx-auto max-w-lg px-5 py-6 pb-24">
+    <main className="px-5 md:px-10 lg:px-16 py-6 pb-24 h-dvh overflow-y-auto">
       <h1
         className="text-sm font-semibold tracking-widest uppercase mb-2"
         style={{ color: 'var(--text-primary)' }}

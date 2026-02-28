@@ -1,5 +1,5 @@
 {
-  "name": "@ethpulse/pipeline",
+  "name": "@hexcast/pipeline",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ethpulse/shared": "*",
+    "@hexcast/shared": "*",
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.49.0",
     "cheerio": "^1.0.0",

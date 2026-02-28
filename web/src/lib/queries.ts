@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Card, SourceRegistry } from '@ethpulse/shared';
+import type { Card, SourceRegistry } from '@hexcast/shared';
 
 export interface CardQueryParams {
   cursor?: string;

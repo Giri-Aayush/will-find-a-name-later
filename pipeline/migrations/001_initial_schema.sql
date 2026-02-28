@@ -1,4 +1,4 @@
--- EthPulse Initial Schema
+-- Hexcast Initial Schema
 -- Applied to Supabase PostgreSQL
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";

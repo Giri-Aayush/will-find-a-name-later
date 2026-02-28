@@ -1,14 +1,29 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { checkUserRateLimit } from '@/lib/rate-limit';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // GET /api/reactions?card_ids=id1,id2,id3 — get user's reactions + counts
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const cardIds = searchParams.get('card_ids')?.split(',').filter(Boolean) ?? [];
+  const raw = searchParams.get('card_ids') ?? '';
+
+  // Cap length to prevent abuse
+  if (raw.length > 2000) {
+    return NextResponse.json({ error: 'card_ids too long' }, { status: 400 });
+  }
+
+  const cardIds = raw.split(',').filter(Boolean).slice(0, 50);
 
   if (cardIds.length === 0) {
     return NextResponse.json({ reactions: {}, userReactions: {} });
+  }
+
+  // Validate each ID is a UUID
+  if (cardIds.some(id => !UUID_RE.test(id))) {
+    return NextResponse.json({ error: 'Invalid card_id format' }, { status: 400 });
   }
 
   // Get aggregate counts
@@ -62,11 +77,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { card_id, reaction } = body;
+  // Per-user rate limit: 30 reactions per minute
+  const rl = checkUserRateLimit(userId, 'reactions', 30, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+  }
 
-  if (!card_id || typeof card_id !== 'string') {
-    return NextResponse.json({ error: 'card_id is required' }, { status: 400 });
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  const { card_id, reaction } = body as { card_id?: string; reaction?: string };
+
+  if (!card_id || typeof card_id !== 'string' || !UUID_RE.test(card_id)) {
+    return NextResponse.json({ error: 'Valid card_id is required' }, { status: 400 });
   }
   if (!reaction || !['up', 'down'].includes(reaction)) {
     return NextResponse.json({ error: 'reaction must be "up" or "down"' }, { status: 400 });

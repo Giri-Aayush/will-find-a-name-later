@@ -1,5 +1,5 @@
 import { BaseFetcher } from './base.js';
-import type { FetchResult } from '@ethpulse/shared';
+import type { FetchResult } from '@hexcast/shared';
 import { logger } from '../utils/logger.js';
 
 // ── DefiLlama API types ────────────────────────────────────────────────

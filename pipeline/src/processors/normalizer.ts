@@ -1,4 +1,4 @@
-import type { RawItem, Category, EngagementMetrics } from '@ethpulse/shared';
+import type { RawItem, Category, EngagementMetrics } from '@hexcast/shared';
 
 export interface NormalizedItem {
   sourceId: string;
@@ -22,7 +22,11 @@ export function normalize(rawItem: RawItem): NormalizedItem | null {
 
   const author = extractAuthor(rawItem.source_id, metadata);
   const engagement = extractEngagement(rawItem.source_id, metadata);
-  const publishedAt = new Date(rawItem.fetched_at);
+
+  // Use the real publish date from the source; fall back to fetch time.
+  const publishedAt = rawItem.published_at
+    ? new Date(rawItem.published_at)
+    : new Date(rawItem.fetched_at);
 
   return {
     sourceId: rawItem.source_id,
