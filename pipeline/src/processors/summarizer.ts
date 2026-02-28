@@ -91,10 +91,11 @@ function countWords(text: string): number {
 // ── Main Summarizer ──────────────────────────────────────────────────────
 
 const MAX_RETRIES = 3;
-const MIN_WORDS = 58;
-const MAX_WORDS = 62;
+const MIN_WORDS = 55;
+const MAX_WORDS = 60;
 const FALLBACK_MIN = 50;
-const FALLBACK_MAX = 70;
+const FALLBACK_MAX = 65;
+const HARD_MAX_WORDS = 67; // absolute ceiling — truncate anything above this
 
 // Concurrent-safe rate limiter for OpenAI Mini (Tier 1: 500 RPM)
 // Serializes API calls via promise chain so concurrent workers are spaced ≥150ms apart
@@ -186,9 +187,19 @@ export async function summarize(
         );
         break;
       }
-      if (lastWordCount >= 20) {
+      if (lastWordCount >= 20 && lastWordCount <= HARD_MAX_WORDS) {
         logger.warn(
-          `Summary word count ${lastWordCount} far from target, accepting minimal summary after ${MAX_RETRIES} retries`
+          `Summary word count ${lastWordCount} outside target, accepting after ${MAX_RETRIES} retries`
+        );
+        break;
+      }
+      if (lastWordCount > HARD_MAX_WORDS) {
+        // Over hard limit — truncate to 60 words
+        const words = summary.split(/\s+/).filter(Boolean);
+        summary = words.slice(0, 60).join(' ');
+        if (!summary.endsWith('.')) summary += '.';
+        logger.warn(
+          `Summary was ${lastWordCount} words — hard-truncated to ${countWords(summary)} words`
         );
         break;
       }
@@ -198,6 +209,15 @@ export async function summarize(
     }
 
     logger.debug(`Attempt ${attempt}: summary was ${lastWordCount} words, retrying...`);
+  }
+
+  // Hard safety net: never allow more than HARD_MAX_WORDS
+  lastWordCount = countWords(summary);
+  if (lastWordCount > HARD_MAX_WORDS) {
+    const words = summary.split(/\s+/).filter(Boolean);
+    summary = words.slice(0, 60).join(' ');
+    if (!summary.endsWith('.')) summary += '.';
+    logger.warn(`Post-loop safety: truncated from ${lastWordCount} to ${countWords(summary)} words`);
   }
 
   // Final entity preservation check — log warning but don't block

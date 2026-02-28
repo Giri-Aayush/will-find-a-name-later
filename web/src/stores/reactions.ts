@@ -92,18 +92,24 @@ export const useReactions = create<ReactionsState>((set, get) => ({
       });
 
       if (!res.ok) {
-        // Revert on failure
+        // Revert on failure — read fresh state to avoid stale closure
+        const freshPrev = get().userReactions[cardId];
+        if (freshPrev === newReaction) {
+          set(state => ({
+            userReactions: { ...state.userReactions, [cardId]: prev },
+            counts: { ...state.counts, [cardId]: prevCounts },
+          }));
+        }
+      }
+    } catch {
+      // Revert on error — read fresh state to avoid stale closure
+      const freshPrev = get().userReactions[cardId];
+      if (freshPrev === newReaction) {
         set(state => ({
           userReactions: { ...state.userReactions, [cardId]: prev },
           counts: { ...state.counts, [cardId]: prevCounts },
         }));
       }
-    } catch {
-      // Revert on error
-      set(state => ({
-        userReactions: { ...state.userReactions, [cardId]: prev },
-        counts: { ...state.counts, [cardId]: prevCounts },
-      }));
     }
   },
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { memo, useEffect, useState, useRef } from 'react';
 import { useUser, useClerk } from '@clerk/nextjs';
 import type { Card as CardType } from '@hexcast/shared';
 import { relativeTime, extractDomain, CATEGORY_LABELS, CATEGORY_BADGE_CLASS } from '@/lib/utils';
@@ -20,7 +20,7 @@ const FLAG_REASONS = [
   'Other',
 ] as const;
 
-export function Card({ card }: CardProps) {
+export const Card = memo(function Card({ card }: CardProps) {
   const [flagged, setFlagged] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [flagStep, setFlagStep] = useState<'idle' | 'reason' | 'confirm' | 'done'>('idle');
@@ -518,4 +518,4 @@ export function Card({ card }: CardProps) {
       )}
     </article>
   );
-}
+});

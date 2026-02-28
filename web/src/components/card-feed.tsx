@@ -147,6 +147,14 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
   const viewedRef = useRef(new Set<string>());
   const dwellStartRef = useRef<{ cardId: string; time: number } | null>(null);
 
+  // Store latest callbacks in refs so observer doesn't need to recreate
+  const loadMoreRef = useRef(loadMore);
+  loadMoreRef.current = loadMore;
+  const visibleCardsRef = useRef(visibleCards);
+  visibleCardsRef.current = visibleCards;
+  const scheduleFlushRef = useRef(scheduleFlush);
+  scheduleFlushRef.current = scheduleFlush;
+
   // Track current card + preload near end + analytics
   useEffect(() => {
     const container = containerRef.current;
@@ -154,15 +162,16 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
 
     const observer = new IntersectionObserver(
       (entries) => {
+        const currentVisibleCards = visibleCardsRef.current;
         for (const entry of entries) {
           const idx = Number(entry.target.getAttribute('data-index'));
           if (isNaN(idx)) continue;
 
           if (entry.isIntersecting) {
             setCurrentIndex(idx);
-            if (idx >= visibleCards.length - 5) loadMore();
+            if (idx >= currentVisibleCards.length - 5) loadMoreRef.current();
 
-            const card = visibleCards[idx];
+            const card = currentVisibleCards[idx];
             if (card && !viewedRef.current.has(card.id)) {
               viewedRef.current.add(card.id);
               capture('card_viewed', {
@@ -173,7 +182,7 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
 
               if (personalized) {
                 pendingViewsRef.current.add(card.id);
-                scheduleFlush();
+                scheduleFlushRef.current();
               }
             }
 
@@ -181,7 +190,7 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
               dwellStartRef.current = { cardId: card.id, time: Date.now() };
             }
           } else {
-            const card = visibleCards[idx];
+            const card = currentVisibleCards[idx];
             if (card && dwellStartRef.current?.cardId === card.id) {
               const duration = Math.round((Date.now() - dwellStartRef.current.time) / 1000);
               if (duration >= 1) {
@@ -202,7 +211,9 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
     const items = container.querySelectorAll('[data-index]');
     items.forEach(item => observer.observe(item));
     return () => observer.disconnect();
-  }, [visibleCards, loadMore, personalized, scheduleFlush]);
+  // Re-observe only when the DOM items change (visibleCards length), not on callback changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibleCards.length, personalized]);
 
   // Pull-to-refresh
   const touchStartY = useRef<number | null>(null);

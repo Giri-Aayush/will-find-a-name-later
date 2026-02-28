@@ -28,7 +28,7 @@ export const useSaved = create<SavedState>((set, get) => ({
         try {
           const res = await fetch('/api/saved');
           if (!res.ok) {
-            set({ initialized: true });
+            // Don't set initialized — allow retry on next navigation
             return;
           }
           const { saved } = await res.json();
@@ -39,7 +39,7 @@ export const useSaved = create<SavedState>((set, get) => ({
             initialized: true,
           });
         } catch {
-          set({ initialized: true });
+          // Don't set initialized — allow retry on next navigation
         } finally {
           initPromise = null;
         }

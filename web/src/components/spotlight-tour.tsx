@@ -19,16 +19,20 @@ export function SpotlightTour() {
     if (started.current) return;
     if (localStorage.getItem(STORAGE_KEY)) return;
 
+    let cancelled = false;
+
     // Wait for cards to render before starting
     const waitForCards = setInterval(() => {
+      if (cancelled) { clearInterval(waitForCards); return; }
       const card = document.querySelector('.card-summary');
       if (!card) return;
       clearInterval(waitForCards);
-      startTour();
+      if (!cancelled) startTour();
     }, 500);
 
     const timeout = setTimeout(() => clearInterval(waitForCards), 10000);
     return () => {
+      cancelled = true;
       clearInterval(waitForCards);
       clearTimeout(timeout);
     };
