@@ -13,7 +13,6 @@ const SOURCE_CATEGORY_MAP: Record<string, Category> = {
 
   // Tier 2 — Community Intelligence
   'medium.com/ethereum-cat-herders': 'PROTOCOL_CALLS',
-  'weekinethereum.substack.com': 'ANNOUNCEMENT',
   'christinedkim.substack.com': 'PROTOCOL_CALLS',
   'ethereumweeklydigest.substack.com': 'ANNOUNCEMENT',
 
@@ -78,8 +77,8 @@ const SOURCE_CATEGORY_MAP: Record<string, Category> = {
   // Tier 12 — Research & Security Blogs
   'joncharbonneau.substack.com': 'RESEARCH',
   'blog.trailofbits.com': 'SECURITY',
-  'blog.openzeppelin.com': 'SECURITY',
-  'nethermind.io/blog': 'RESEARCH',
+  'www.openzeppelin.com': 'SECURITY',
+  'www.nethermind.io': 'RESEARCH',
 
   // P1 — High-Signal Sources
   'rekt.news': 'SECURITY',

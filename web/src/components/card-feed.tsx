@@ -172,6 +172,8 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
 
           if (entry.isIntersecting) {
             setCurrentIndex(idx);
+            // Haptic tick on card snap (skip first card)
+            if (idx > 0) navigator.vibrate?.(6);
             if (idx >= currentVisibleCards.length - 5) loadMoreRef.current();
 
             const card = currentVisibleCards[idx];

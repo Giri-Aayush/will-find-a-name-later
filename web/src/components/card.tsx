@@ -149,6 +149,7 @@ export const Card = memo(function Card({ card }: CardProps) {
     }
     if (!isSignedIn) return;
     try {
+      navigator.vibrate?.([15, 60, 15]); // Double-pulse on save
       const nowSaved = await toggleSave(card.id, card);
       capture(nowSaved ? 'card_saved' : 'card_unsaved', { card_id: card.id });
       toast(nowSaved ? 'Saved' : 'Removed from saved');
@@ -165,9 +166,11 @@ export const Card = memo(function Card({ card }: CardProps) {
       {/* ── Bookmark ribbon (top-right) ── */}
       <button
         onClick={handleSave}
-        className="absolute top-0 right-6 z-10 btn-neon animate-in"
+        onTouchEnd={(e) => { e.preventDefault(); handleSave(e as unknown as React.MouseEvent); }}
+        className="absolute top-0 right-3 z-10 btn-neon animate-in px-2 pb-2"
         style={{
           filter: saved ? 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))' : 'none',
+          touchAction: 'manipulation',
         }}
         title={saved ? 'Unsave' : 'Save'}
       >
@@ -321,7 +324,7 @@ export const Card = memo(function Card({ card }: CardProps) {
 
       {/* ── Bottom: Read Source + Reactions (single row) ── */}
       <div
-        className="card-actions shrink-0 pt-4 pb-14 animate-in animate-delay-3 relative z-1"
+        className="card-actions shrink-0 pt-4 pb-16 animate-in animate-delay-3 relative z-10"
         style={{ borderTop: '1px solid var(--border-medium)' }}
       >
         <div className="flex items-center">
@@ -347,13 +350,15 @@ export const Card = memo(function Card({ card }: CardProps) {
 
           <button
             onClick={(e) => handleReaction(e, 'up')}
-            className={`reaction-btn flex items-center gap-1.5 px-2 py-1.5 ${reactionPop === 'up' ? 'reaction-pop' : ''}`}
+            onTouchEnd={(e) => { e.preventDefault(); handleReaction(e as unknown as React.MouseEvent, 'up'); }}
+            className={`reaction-btn flex items-center gap-1.5 px-3 py-2.5 -my-1 ${reactionPop === 'up' ? 'reaction-pop' : ''}`}
             style={{
               color: userReaction === 'up' ? 'var(--accent-green)' : 'var(--text-muted)',
               filter: userReaction === 'up' ? 'drop-shadow(0 0 6px rgba(34, 197, 94, 0.4))' : 'none',
+              touchAction: 'manipulation',
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill={userReaction === 'up' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill={userReaction === 'up' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
               <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
             </svg>
@@ -361,13 +366,15 @@ export const Card = memo(function Card({ card }: CardProps) {
           </button>
           <button
             onClick={(e) => handleReaction(e, 'down')}
-            className={`reaction-btn flex items-center gap-1.5 px-2 py-1.5 ${reactionPop === 'down' ? 'reaction-pop' : ''}`}
+            onTouchEnd={(e) => { e.preventDefault(); handleReaction(e as unknown as React.MouseEvent, 'down'); }}
+            className={`reaction-btn flex items-center gap-1.5 px-3 py-2.5 -my-1 ${reactionPop === 'down' ? 'reaction-pop' : ''}`}
             style={{
               color: userReaction === 'down' ? 'var(--accent-red)' : 'var(--text-muted)',
               filter: userReaction === 'down' ? 'drop-shadow(0 0 6px rgba(239, 68, 68, 0.4))' : 'none',
+              touchAction: 'manipulation',
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill={userReaction === 'down' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill={userReaction === 'down' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z" />
               <path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" />
             </svg>
@@ -375,15 +382,17 @@ export const Card = memo(function Card({ card }: CardProps) {
           </button>
           <button
             onClick={handleFlagClick}
-            className="btn-neon px-2 py-1.5"
+            onTouchEnd={(e) => { if (!flagged) { e.preventDefault(); handleFlagClick(e as unknown as React.MouseEvent); } }}
+            className="btn-neon px-3 py-2.5 -my-1"
             style={{
               color: flagged ? 'var(--accent-red)' : 'var(--text-muted)',
               filter: flagged ? 'drop-shadow(0 0 6px rgba(239, 68, 68, 0.4))' : 'none',
+              touchAction: 'manipulation',
             }}
             disabled={flagged}
             title="Report"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill={flagged ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill={flagged ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
               <line x1="4" y1="22" x2="4" y2="15" />
             </svg>

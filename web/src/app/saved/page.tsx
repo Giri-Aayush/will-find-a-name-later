@@ -23,12 +23,27 @@ function SavedCards() {
 
   if (savedCards.length === 0) {
     return (
-      <div className="py-12 text-center text-[11px] tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
-        [no saved cards yet]
-        <br />
-        <span className="mt-2 block text-[10px]" style={{ color: 'var(--text-muted)' }}>
-          tap [*] on any card to save it
-        </span>
+      <div className="py-20 flex flex-col items-center text-center">
+        <svg width="28" height="38" viewBox="0 0 22 30" fill="none" className="mb-5 opacity-30">
+          <path
+            d="M0 0H22V30L11 23L0 30V0Z"
+            stroke="var(--text-muted)"
+            strokeWidth="1"
+          />
+          <path
+            d="M8 10L10 12L14 8"
+            stroke="var(--text-muted)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <div className="text-[12px] tracking-widest uppercase mb-3" style={{ color: 'var(--text-secondary)' }}>
+          [no saved cards yet]
+        </div>
+        <p className="text-[11px] leading-relaxed max-w-xs" style={{ color: 'var(--text-muted)' }}>
+          Tap the bookmark icon on any card to save it here for quick access later.
+        </p>
       </div>
     );
   }
