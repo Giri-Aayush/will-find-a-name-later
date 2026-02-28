@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Subtle blue radial glow behind the text -->
+    <radialGradient id="glow" cx="50%" cy="50%" r="45%" gradientUnits="objectBoundingBox">
+      <stop offset="0%"   stop-color="#3b82f6" stop-opacity="0.20"/>
+      <stop offset="60%"  stop-color="#3b82f6" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Clip to rounded square so overflow is clean -->
+    <clipPath id="shape">
+      <rect width="512" height="512" rx="108" ry="108"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="512" height="512" rx="108" ry="108" fill="#06060a"/>
+
+  <!-- Radial glow -->
+  <rect width="512" height="512" rx="108" ry="108" fill="url(#glow)"/>
+
+  <!-- 1px outer border — matches Hexcast card chrome -->
+  <rect x="2" y="2" width="508" height="508" rx="107" ry="107"
+        fill="none" stroke="#1a1a2e" stroke-width="2.5"/>
+
+  <!-- ── Horizontal rule lines (Hexcast UI border language) ── -->
+  <line x1="68" y1="188" x2="444" y2="188" stroke="#1a1a2e" stroke-width="1.5" opacity="0.9"/>
+  <line x1="68" y1="324" x2="444" y2="324" stroke="#1a1a2e" stroke-width="1.5" opacity="0.9"/>
+
+  <!-- Small blue accent ticks at line ends -->
+  <rect x="68"  y="184" width="14" height="9" fill="#3b82f6" opacity="0.7"/>
+  <rect x="430" y="184" width="14" height="9" fill="#3b82f6" opacity="0.7"/>
+  <rect x="68"  y="319" width="14" height="9" fill="#3b82f6" opacity="0.7"/>
+  <rect x="430" y="319" width="14" height="9" fill="#3b82f6" opacity="0.7"/>
+
+  <!-- ── [HX] — main icon mark ── -->
+  <!-- Rendered as one centered text for perfect monospace alignment -->
+  <!-- Font: IBM Plex Mono Bold (falls back to Courier New — same proportions) -->
+  <text
+    x="256"
+    y="256"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="'IBM Plex Mono', 'Courier New', Courier, monospace"
+    font-size="196"
+    font-weight="700"
+    letter-spacing="-4"
+  >
+    <tspan fill="#3b82f6">[</tspan><tspan fill="#e8e8f0">HX</tspan><tspan fill="#3b82f6">]</tspan>
+  </text>
+</svg>

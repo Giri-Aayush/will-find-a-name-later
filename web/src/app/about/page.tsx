@@ -1,3 +1,14 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'About — Hexcast',
+  description: 'How Hexcast works: 88 curated Ethereum sources, AI-powered 60-word summaries, 8 categories of signal. Open source, no paywall, updated continuously.',
+  openGraph: {
+    title: 'About — Hexcast',
+    description: 'How Hexcast works: 88 curated Ethereum sources, AI-powered 60-word summaries, 8 categories of signal.',
+  },
+};
+
 export default function AboutPage() {
   return (
     <main className="px-5 md:px-10 lg:px-16 py-6 pb-24 h-dvh overflow-y-auto">
@@ -20,7 +31,7 @@ export default function AboutPage() {
           boxShadow: '0 0 20px rgba(59, 130, 246, 0.04)',
         }}
       >
-        <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[71]</span> sources</span>
+        <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[88]</span> sources</span>
         <span style={{ color: 'var(--text-muted)' }}>//</span>
         <span><span className="text-glow-accent" style={{ color: 'var(--accent)' }}>[8]</span> categories</span>
         <span style={{ color: 'var(--text-muted)' }}>//</span>
@@ -37,12 +48,12 @@ export default function AboutPage() {
 
       {/* Data Sources */}
       <Section title="data_sources">
-        71 sources across 14 tiers: core protocol research (ethresear.ch, Ethereum
+        88 sources across 17 tiers: core protocol research (ethresear.ch, Ethereum
         Magicians), EIP/ERC registries, All Core Devs management, governance forums
         (Optimism, Arbitrum, zkSync, Starknet, Uniswap, Aave, Lido, and more), 10
-        Ethereum client release feeds, security blogs (Trail of Bits, OpenZeppelin,
-        Sigma Prime, Rekt News), CryptoPanic trending, DefiLlama on-chain metrics,
-        and community newsletters.
+        Ethereum client release feeds, L2 team blogs, security auditors (Trail of Bits,
+        OpenZeppelin, Zellic, Chainalysis, SlowMist, and more), research blogs,
+        CryptoPanic trending, DefiLlama on-chain metrics, and community newsletters.
       </Section>
 
       {/* How It Works */}
