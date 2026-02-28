@@ -44,7 +44,7 @@ describe('createCard', () => {
     sourceId: 'test-source',
     canonicalUrl: 'https://example.com/article',
     urlHash: 'abc123hash',
-    category: 'governance' as const,
+    category: 'GOVERNANCE' as const,
     headline: 'Test Headline',
     summary: 'A test summary',
     author: 'alice',
