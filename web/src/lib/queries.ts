@@ -42,7 +42,8 @@ export async function getCards(params: CardQueryParams = {}): Promise<Card[]> {
  * maintains chronological order within each group, then round-robins
  * across categories for maximum diversity.
  */
-function interleaveBySource(cards: Card[]): Card[] {
+/** @internal Exported for testing */
+export function interleaveBySource(cards: Card[]): Card[] {
   if (cards.length <= 1) return cards;
 
   // Group by category

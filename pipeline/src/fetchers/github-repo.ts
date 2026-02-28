@@ -47,7 +47,8 @@ function parseGitHubRepo(baseUrl: string): { owner: string; repo: string } {
 //   "Config: Fix merge-repos race condition"       — infrastructure noise
 //   "Website: sync with EIPs"                      — infrastructure noise
 
-function isBotAuthor(login: string | null): boolean {
+/** @internal Exported for testing */
+export function isBotAuthor(login: string | null): boolean {
   if (!login) return false;
   if (login.endsWith('[bot]')) return true;
   const known = new Set([
@@ -66,7 +67,8 @@ const SIGNIFICANT_PATTERNS = [
   /^(EIP|ERC): /i,              // New without number: "ERC: Account Abstraction..."
 ];
 
-function isSignificantEipPR(title: string, author: string | null): boolean {
+/** @internal Exported for testing */
+export function isSignificantEipPR(title: string, author: string | null): boolean {
   if (isBotAuthor(author)) return false;
   return SIGNIFICANT_PATTERNS.some((p) => p.test(title));
 }

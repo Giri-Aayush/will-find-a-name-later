@@ -12,7 +12,10 @@
     "pipeline": "npm run start --workspace=pipeline",
     "pipeline:dev": "npm run dev --workspace=pipeline",
     "seed": "npm run seed --workspace=pipeline",
-    "typecheck": "npm run typecheck --workspace=pipeline && npm run typecheck --workspace=web"
+    "typecheck": "npm run typecheck --workspace=pipeline && npm run typecheck --workspace=web",
+    "test": "npm run test --workspace=pipeline && npm run test --workspace=web",
+    "test:pipeline": "npm run test --workspace=pipeline",
+    "test:web": "npm run test --workspace=web"
   },
   "engines": {
     "node": ">=20.0.0"
