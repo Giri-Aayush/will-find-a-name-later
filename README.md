@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](./LICENSE)
 [![Status](https://img.shields.io/badge/status-live-22c55e?style=flat-square)]()
-[![Sources](https://img.shields.io/badge/sources-70%2B-3b82f6?style=flat-square)]()
+[![Sources](https://img.shields.io/badge/sources-69-3b82f6?style=flat-square)]()
 [![Categories](https://img.shields.io/badge/categories-8-3b82f6?style=flat-square)]()
 [![Built with Next.js](https://img.shields.io/badge/Next.js-15-0c0c14?style=flat-square&logo=next.js&logoColor=3b82f6)](https://nextjs.org)
 
@@ -21,7 +21,7 @@
 
 <br/>
 
-**[→ hexcast.xyz](https://hexcast.xyz)** &nbsp;·&nbsp; [Documentation](#how-it-works) &nbsp;·&nbsp; [Source List](./SOURCES.md) &nbsp;·&nbsp; [Report an Issue](https://github.com/your-org/hexcast/issues)
+**[→ hexcast.xyz](https://hexcast.xyz)** &nbsp;·&nbsp; [Documentation](#how-it-works) &nbsp;·&nbsp; [Source List](./SOURCES.md) &nbsp;·&nbsp; [Report an Issue](https://github.com/Giri-Aayush/hexcast/issues)
 
 </div>
 
@@ -41,12 +41,12 @@ Week in Ethereum News filled this gap. It retired in January 2025. Hexcast picks
 
 ## What Hexcast is
 
-A real-time intelligence feed built for people who build on Ethereum.
+**Hexcast** is an Ethereum ecosystem intelligence platform. The **Hexcast Feed** is what users see — a real-time stream of quality-scored, AI-summarized 60-word cards built for people who build on Ethereum.
 
-Hexcast monitors 70+ curated sources — protocol research forums, client repositories, governance portals, security researchers, DAO multisigs — and surfaces every significant development as a quality-scored, AI-summarized 60-word card. Updated continuously. Zero paywall. No email required.
+The platform monitors 69 curated sources across 14 tiers — protocol research forums, client repositories, governance portals, security researchers, DAO multisigs — and surfaces every significant development as a card in the Hexcast Feed. Updated continuously. Zero paywall. No email required.
 
 ```
-70+ sources  →  quality filter  →  60-word AI summary  →  your feed
+69 sources  →  quality filter  →  60-word AI summary  →  hexcast feed
 ```
 
 ---
@@ -56,13 +56,13 @@ Hexcast monitors 70+ curated sources — protocol research forums, client reposi
 | Category | What it tracks |
 |---|---|
 | `RESEARCH` | Protocol proposals, EIPs in progress, core researcher posts, ethresear.ch threads |
-| `EIP / ERC` | New proposals, status transitions (Draft → Review → Final), implementation discussions |
+| `EIP / ERC` | New proposals, status transitions (Draft → Review → Final), merges to main — bot noise filtered out |
 | `PROTOCOL CALLS` | All Core Devs agendas and summaries, consensus/execution layer decision logs |
 | `GOVERNANCE` | DAO proposals, active votes, outcomes — Optimism, Arbitrum, Lido, Aave, ENS, and 14 others |
 | `UPGRADE` | Client releases, testnet activations, hard fork timelines — all 10 Ethereum clients |
 | `SECURITY` | Exploit post-mortems, audit publications, responsible disclosures, vulnerability advisories |
 | `ANNOUNCEMENT` | Official communications from the Ethereum Foundation, L2 foundations, major protocols |
-| `METRICS` | ETH supply, staking yield, L2 TVL, validator set composition, MEV relay data |
+| `METRICS` | ETH supply, staking yield, L2 TVL, validator set composition, DEX volume via DefiLlama |
 
 ---
 
@@ -76,7 +76,7 @@ Every card preserves the identifiers that matter to protocol developers: EIP num
 
 ## Source depth
 
-**70+ sources across 12 tiers — including sources no other aggregator tracks:**
+**69 sources across 14 tiers — including sources no other aggregator tracks:**
 
 | Tier | Sources |
 |---|---|
@@ -91,7 +91,8 @@ Every card preserves the identifiers that matter to protocol developers: EIP num
 | Standards | RIPs · ERC-4337 / Account Abstraction · Foundry |
 | Metrics | DefiLlama (TVL · stablecoins · DEX volume) |
 | Protocol Coordination | Tim Beiko ACD Updates |
-| Crypto Signals | CryptoPanic (trending · hot · rising) |
+| Crypto Signals | CryptoPanic (trending · hot · rising) · Crypto News API |
+| Language Releases | Go · Solidity |
 
 Complete source registry — active sources, fetcher types, poll intervals, removed sources and reasons: [SOURCES.md](./SOURCES.md)
 Quality rankings across 6 parameters (authority, signal density, ecosystem impact, uniqueness, time sensitivity, integration reliability): [SOURCE_RANKINGS.md](./SOURCE_RANKINGS.md)
@@ -101,22 +102,47 @@ Quality rankings across 6 parameters (authority, signal density, ecosystem impac
 ## How it works
 
 ### 1 · Fetch
-Discourse forums, GitHub APIs, RSS feeds, REST APIs, and custom scrapers run on rolling schedules — every 30 minutes for client release repos, every 2 hours for research forums, every 4 hours for EIP repositories. No manual curation step.
+
+11 fetcher types run on rolling schedules:
+
+| Fetcher | Sources | Schedule |
+|---|---|---|
+| Discourse | ethresear.ch, Ethereum Magicians, 16 DAO governance forums | Every 2–4 hours |
+| GitHub API | EIPs, ERCs, ACD PM — filters bot noise, only surfaces new proposals and meaningful merges | Every 4 hours |
+| RSS | Client releases (Geth, Prysm, etc.), research blogs, EF Blog | Every 30 min – 2 hours |
+| REST API | DefiLlama (TVL, stablecoins, DEX volume) | Every 1 hour |
+| CryptoPanic | Trending, hot, rising crypto signals | Every 30 minutes |
+| Crypto News API | Filtered crypto news | Every 30 minutes |
+| Custom scrapers | Rekt News, Paradigm, HackMD, Nethermind Blog, OpenZeppelin | Every 2–4 hours |
+
+No manual curation step. EIP/ERC fetcher uses whitelist-based title filtering and bot author detection to exclude CI, config, and automated merge PRs.
 
 ### 2 · Quality Score
-Every item receives a `0.0–1.0` quality score before a human (or LLM) sees it:
+
+Every item receives a `0.0–1.0` quality score before the LLM sees it:
 
 ```
 score = (source_weight × 0.40) + (content_signals × 0.60)
 ```
 
-Content signals evaluate: post length, technical term density, engagement metrics where available, and author reputation signals. Items scoring below `0.25` are suppressed automatically — they never reach the summarization step.
+Content signals evaluate: headline quality (length, presence), summary quality, author attribution, and engagement metrics where available. Items scoring below `0.25` are suppressed automatically — they never reach the summarization step.
 
 ### 3 · Summarize
-Claude Haiku generates a factual 60-word summary. Word count is validated (58–62 words accepted) with up to three retries per item. Critical technical identifiers — EIP numbers, vote percentages, client version strings, named authors — are checked for preservation before the card is written to the database. High-complexity content (long research threads, multi-part governance posts) routes to Claude Sonnet 4.6.
+
+GPT-4.1 Mini (production) generates a factual 60-word summary. In development, Ollama with Llama 3.1 8B is used locally.
+
+Word count is enforced with three boundaries:
+- **Target**: 55–60 words (strict pass on first try)
+- **Fallback**: 50–65 words (accepted after 3 retries)
+- **Hard ceiling**: 67 words (anything above is truncated to 60)
+
+Up to three retries per item with word count feedback. Critical technical identifiers — EIP numbers, vote percentages, client version strings, named authors — are checked for entity preservation before the card is written to the database.
+
+A concurrent-safe rate limiter (promise chain) spaces API calls ≥150ms apart to stay within OpenAI Tier 1 limits (500 RPM).
 
 ### 4 · Personalized Feed
-Authenticated users receive unseen-first ordering. The feed tracks what you have read and always surfaces what you have not. Category filters apply globally. Source toggles let you remove any of the 70+ sources from your view permanently.
+
+Authenticated users (via Clerk) receive unseen-first ordering. The feed tracks what you have read and always surfaces what you have not. Category filters apply globally. Source toggles let you hide any of the 69 sources from your view permanently.
 
 ---
 
@@ -125,11 +151,13 @@ Authenticated users receive unseen-first ordering. The feed tracks what you have
 - **Vertical snap-scroll** — one card per screen, swipe to advance
 - **8-category filter bar** — tap to narrow to a single signal type
 - **Unseen-first ordering** — authenticated users always see fresh cards first
-- **Bookmark to reading list** — accessible on any device, works offline
+- **Bookmark to reading list** — accessible on any device, syncs across sessions
 - **React to cards** — thumbs up/down used to tune feed quality over time
-- **Flag inaccuracies** — three-step flow; every flag is reviewed within 24 hours
+- **Flag inaccuracies** — three-step flow with reason selection; every flag is reviewed
 - **Share natively** — X, Telegram, or copy link from any card
-- **PWA** — installable on iOS and Android, no App Store required
+- **Onboarding tour** — first-time visitors get a guided spotlight tour of the interface
+- **PWA** — installable on iOS and Android with context-aware install prompts (native prompt on Android, share-sheet instructions on iOS, QR/URL prompt on desktop)
+- **Per-user rate limiting** — API routes enforce per-user limits (flags 10/hr, reactions 30/min, saves 30/min)
 
 ---
 
@@ -137,18 +165,28 @@ Authenticated users receive unseen-first ordering. The feed tracks what you have
 
 **Target: 97% factual accuracy on weekly random sample audits.**
 
-- Word count enforced at write time (58–62 words, up to 3 LLM retries)
+- Word count enforced at write time (55–60 target, 67 hard max, up to 3 LLM retries)
 - Entity preservation verified before card is committed to database
+- EIP/ERC fetcher filters bot authors and CI/infrastructure PRs at ingestion
 - All flagged cards reviewed within 24 hours
 - Cards confirmed inaccurate are removed and reprocessed against original source
-- Pipeline suspended automatically if accuracy drops below 95%
 
 ---
 
+## Security
+
+- **CSP headers** — Content-Security-Policy restricts script, style, connect, and frame sources to known domains (Clerk, PostHog, Supabase, Google Fonts)
+- **HSTS** — `max-age=63072000; includeSubDomains; preload`
+- **Input validation** — UUID format validation, string length caps, array size limits on all API routes
+- **Per-user rate limiting** — in-memory rate limiter keyed by `userId:action`
+- **Duplicate flag prevention** — 409 on repeat flags for same card
+- **X-Frame-Options: DENY**, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+
+---
 
 ## Suggest a source
 
-Hexcast's quality depends on its source selection. If you know a source that belongs in the feed, open an issue with:
+Hexcast's quality depends on its source selection. If you know a source that belongs in the Hexcast Feed, open an issue with:
 
 1. The source URL
 2. Why it belongs (what category, what signal it provides)
