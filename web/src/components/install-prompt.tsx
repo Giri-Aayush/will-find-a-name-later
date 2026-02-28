@@ -21,6 +21,11 @@ function getDeviceType(): Variant {
   return 'desktop';
 }
 
+function isIOSSafari(): boolean {
+  const ua = navigator.userAgent;
+  return /iPad|iPhone|iPod/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS|OPiOS|EdgiOS/.test(ua);
+}
+
 function isStandalone(): boolean {
   return (
     window.matchMedia('(display-mode: standalone)').matches ||
@@ -161,6 +166,7 @@ export function InstallPrompt() {
 
   /* ── iOS: instruction sheet ──────────────────────────────────── */
   if (variant === 'ios') {
+    const isSafari = isIOSSafari();
     return (
       <div
         className="fixed z-50 left-4 right-4 animate-slide-up"
@@ -186,7 +192,9 @@ export function InstallPrompt() {
                 className="text-[9px] tracking-wider leading-relaxed"
                 style={{ color: 'var(--text-muted)' }}
               >
-                install hexcast for the full app experience
+                {isSafari
+                  ? 'install hexcast for the full app experience'
+                  : 'open hexcast.xyz in safari to install'}
               </div>
             </div>
             <button
@@ -204,6 +212,32 @@ export function InstallPrompt() {
 
           {/* Steps */}
           <div className="flex flex-col gap-3">
+            {!isSafari && (
+              <div className="flex items-center gap-3">
+                <div
+                  className="shrink-0 w-8 h-8 flex items-center justify-center"
+                  style={{
+                    border: '1px solid var(--border-medium)',
+                    background: 'var(--bg-surface)',
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-[10px] font-medium tracking-wider uppercase" style={{ color: 'var(--text-primary)' }}>
+                    open in safari first
+                  </div>
+                  <div className="text-[9px] tracking-wider" style={{ color: 'var(--text-muted)' }}>
+                    chrome on ios cannot install apps
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Step 1 */}
             <div className="flex items-center gap-3">
               <div

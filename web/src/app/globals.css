@@ -215,6 +215,16 @@ body::after {
   transition: width 0.3s ease-out;
 }
 
+/* ── Mobile tap fix (iOS needs cursor:pointer for click events) ── */
+.card-actions button,
+.card-actions a,
+button.btn-neon,
+button.reaction-btn {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 /* ── Neon button styles ────────────────────────────────────────── */
 .btn-neon {
   transition: all 0.15s ease;

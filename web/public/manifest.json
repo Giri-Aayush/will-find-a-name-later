@@ -2,6 +2,8 @@
   "name": "Hexcast",
   "short_name": "Hexcast",
   "description": "Ethereum ecosystem intelligence in 60-word cards.",
+  "id": "/",
+  "scope": "/",
   "start_url": "/?utm_source=pwa",
   "display": "standalone",
   "orientation": "portrait-primary",
