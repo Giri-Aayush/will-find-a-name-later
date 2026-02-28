@@ -54,7 +54,28 @@ export default async function CardPage({ params }: Props) {
 
   const categoryLabel = CATEGORY_LABELS[card.category] ?? card.category;
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: card.headline,
+    description: card.summary,
+    url: `https://hexcast.xyz/card/${id}`,
+    datePublished: card.published_at,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Hexcast',
+      url: 'https://hexcast.xyz',
+    },
+    mainEntityOfPage: card.canonical_url,
+    articleSection: categoryLabel,
+  };
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
     <main
       className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
       style={{ background: 'var(--bg-deep)' }}
@@ -122,5 +143,6 @@ export default async function CardPage({ params }: Props) {
         Ethereum ecosystem intelligence
       </p>
     </main>
+    </>
   );
 }

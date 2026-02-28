@@ -10,8 +10,21 @@ import { SpotlightTour } from '@/components/spotlight-tour';
 
 export const metadata: Metadata = {
   title: 'Hexcast',
-  description: 'Ethereum ecosystem intelligence in 60-word cards.',
+  description: 'Ethereum ecosystem intelligence in 60-word cards. Protocol updates, governance votes, security incidents, and client releases from 69 curated sources.',
   manifest: '/manifest.json',
+  metadataBase: new URL('https://hexcast.xyz'),
+  openGraph: {
+    title: 'Hexcast',
+    description: 'Ethereum ecosystem intelligence — 60 words at a time.',
+    url: 'https://hexcast.xyz',
+    siteName: 'Hexcast',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Hexcast',
+    description: 'Ethereum ecosystem intelligence — 60 words at a time.',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
