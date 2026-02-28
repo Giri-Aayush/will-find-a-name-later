@@ -62,19 +62,18 @@ beforeEach(() => {
 
 // --- Tests ---
 
-describe('GET /api/og', () => {
-  it('returns 400 when id query param is missing', async () => {
-    const res = await GET(req('http://localhost:3000/api/og'));
+describe('GET /og', () => {
+  it('returns homepage OG image when no id provided', async () => {
+    const res = await GET(req('http://localhost:3000/og'));
 
-    expect(res.status).toBe(400);
-    const text = await res.text();
-    expect(text).toBe('Missing id');
+    expect(res.status).toBe(200);
+    expect(res).toBeInstanceOf(MockImageResponse);
   });
 
   it('returns 404 when card not found', async () => {
     mockGetCardById.mockResolvedValue(null);
 
-    const res = await GET(req('http://localhost:3000/api/og?id=nonexistent'));
+    const res = await GET(req('http://localhost:3000/og?id=nonexistent'));
 
     expect(res.status).toBe(404);
     const text = await res.text();
@@ -84,7 +83,7 @@ describe('GET /api/og', () => {
   it('returns 500 when getCardById throws', async () => {
     mockGetCardById.mockRejectedValue(new Error('DB error'));
 
-    const res = await GET(req('http://localhost:3000/api/og?id=card-123'));
+    const res = await GET(req('http://localhost:3000/og?id=card-123'));
 
     expect(res.status).toBe(500);
     const text = await res.text();
@@ -95,11 +94,10 @@ describe('GET /api/og', () => {
     const card = makeCard();
     mockGetCardById.mockResolvedValue(card as any);
 
-    const res = await GET(req('http://localhost:3000/api/og?id=card-123'));
+    const res = await GET(req('http://localhost:3000/og?id=card-123'));
 
     expect(res.status).toBe(200);
     expect(mockGetCardById).toHaveBeenCalledWith('card-123');
-    // Verify it is an instance of our mock ImageResponse
     expect(res).toBeInstanceOf(MockImageResponse);
   });
 
@@ -108,10 +106,8 @@ describe('GET /api/og', () => {
     const card = makeCard({ summary: longSummary });
     mockGetCardById.mockResolvedValue(card as any);
 
-    const res = await GET(req('http://localhost:3000/api/og?id=card-123'));
+    const res = await GET(req('http://localhost:3000/og?id=card-123'));
 
-    // The truncated summary would be 180 chars + '...'
-    // Since ImageResponse is mocked, we verify the route succeeds
     expect(res.status).toBe(200);
     expect(mockGetCardById).toHaveBeenCalledWith('card-123');
   });
@@ -120,9 +116,8 @@ describe('GET /api/og', () => {
     const card = makeCard({ canonical_url: 'https://www.ethresear.ch/t/some-post' });
     mockGetCardById.mockResolvedValue(card as any);
 
-    const res = await GET(req('http://localhost:3000/api/og?id=card-123'));
+    const res = await GET(req('http://localhost:3000/og?id=card-123'));
 
-    // Domain extraction is internal to the JSX; verify the route succeeds
     expect(res.status).toBe(200);
   });
 
@@ -130,10 +125,8 @@ describe('GET /api/og', () => {
     const card = makeCard({ category: 'TOTALLY_UNKNOWN' });
     mockGetCardById.mockResolvedValue(card as any);
 
-    const res = await GET(req('http://localhost:3000/api/og?id=card-123'));
+    const res = await GET(req('http://localhost:3000/og?id=card-123'));
 
-    // Unknown category should fall back to RESEARCH colors (via ?? CATEGORY_COLORS.RESEARCH)
-    // The route should not throw — it handles missing categories gracefully
     expect(res.status).toBe(200);
   });
 
@@ -141,10 +134,8 @@ describe('GET /api/og', () => {
     const card = makeCard({ category: 'NEW_CATEGORY' });
     mockGetCardById.mockResolvedValue(card as any);
 
-    const res = await GET(req('http://localhost:3000/api/og?id=card-123'));
+    const res = await GET(req('http://localhost:3000/og?id=card-123'));
 
-    // CATEGORY_LABELS['NEW_CATEGORY'] is undefined, so ?? card.category is used
-    // The route should handle this without error
     expect(res.status).toBe(200);
   });
 });

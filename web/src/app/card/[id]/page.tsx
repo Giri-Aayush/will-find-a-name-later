@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const categoryLabel = CATEGORY_LABELS[card.category] ?? card.category;
   const description = card.summary.length > 200 ? card.summary.slice(0, 200) + '...' : card.summary;
-  const ogImageUrl = `/api/og?id=${id}`;
+  const ogImageUrl = `/og?id=${id}`;
 
   return {
     title: `${card.headline} — Hexcast`,
