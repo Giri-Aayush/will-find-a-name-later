@@ -2,7 +2,7 @@ name: Pipeline - All Sources
 
 on:
   schedule:
-    # Every 6 hours — fetches from all 69 sources, processes up to BATCH_SIZE items
+    # Every 6 hours — fetches from all 88 sources, processes up to BATCH_SIZE items
     - cron: '0 */6 * * *'
   workflow_dispatch:
     inputs:
