@@ -9,6 +9,14 @@ dist/
 # Build artifacts
 web/tsconfig.tsbuildinfo
 
+# PWA auto-generated files (built by @ducanh2912/next-pwa)
+web/public/sw.js
+web/public/sw.js.map
+web/public/workbox-*.js
+web/public/workbox-*.js.map
+web/public/fallback-*.js
+web/public/swe-worker-*.js
+
 # IDE / tool configs (local only)
 .agents/
 .claude/
