@@ -18,7 +18,6 @@ const RSS_FEEDS: Record<string, string> = {
   'vitalik.eth.limo': 'https://vitalik.eth.limo/feed.xml',
   // Tier 2 — Community newsletters
   'medium.com/ethereum-cat-herders': 'https://medium.com/feed/ethereum-cat-herders',
-  'weekinethereum.substack.com': 'https://weekinethereum.substack.com/feed',
   'christinedkim.substack.com': 'https://christinedkim.substack.com/feed',
   'ethereumweeklydigest.substack.com': 'https://ethereumweeklydigest.substack.com/feed',
   // Tier 5 — Client release Atom feeds
@@ -32,6 +31,15 @@ const RSS_FEEDS: Record<string, string> = {
   'github.com/ConsenSys/teku': 'https://github.com/ConsenSys/teku/releases.atom',
   'github.com/status-im/nimbus-eth2': 'https://github.com/status-im/nimbus-eth2/releases.atom',
   'github.com/ChainSafe/lodestar': 'https://github.com/ChainSafe/lodestar/releases.atom',
+  // Tier 11 — Developer tooling
+  'github.com/foundry-rs/foundry': 'https://github.com/foundry-rs/foundry/releases.atom',
+  // Tier 12 — Research & security blogs (RSS)
+  'joncharbonneau.substack.com': 'https://joncharbonneau.substack.com/feed',
+  'blog.trailofbits.com': 'https://blog.trailofbits.com/feed/',
+  'nethermind.io/blog': 'https://nethermind.io/blog/feed/',
+  // P1 high-signal sources with RSS
+  'writings.flashbots.net': 'https://writings.flashbots.net/rss.xml',
+  'samczsun.com': 'https://samczsun.com/rss/',
 };
 
 // Sources that need full article scraping (feeds with only excerpts)

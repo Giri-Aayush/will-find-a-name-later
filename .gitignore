@@ -5,5 +5,17 @@ dist/
 *.log
 .DS_Store
 .next/
+
+# Build artifacts
+web/tsconfig.tsbuildinfo
+
+# IDE / tool configs (local only)
+.agents/
+.claude/
+
+# Research docs (not shipped)
 PD.md
 RESEARCH.md
+COMPETITIVE_ANALYSIS.md
+MARKETING.md
+SOURCES_RESEARCH.md

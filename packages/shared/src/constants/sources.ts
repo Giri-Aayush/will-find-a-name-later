@@ -4,7 +4,7 @@ export interface SourceDefinition {
   id: string;
   display_name: string;
   base_url: string;
-  api_type: 'discourse' | 'github_api' | 'rss' | 'graphql' | 'html_scraper' | 'rest_api' | 'cryptopanic' | 'crypto_news_api';
+  api_type: 'discourse' | 'github_api' | 'rss' | 'graphql' | 'html_scraper' | 'rest_api' | 'cryptopanic' | 'crypto_news_api' | 'rekt_scraper' | 'paradigm_scraper' | 'hackmd_scraper';
   poll_interval_s: number;
   default_category: Category;
 }
@@ -362,6 +362,22 @@ export const TIER_8_DEFI_GOVERNANCE: SourceDefinition[] = [
     poll_interval_s: 7200,
     default_category: 'GOVERNANCE',
   },
+  {
+    id: 'governance.aave.com',
+    display_name: 'Aave Governance Forum',
+    base_url: 'https://governance.aave.com',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
+  {
+    id: 'forum.sky.money',
+    display_name: 'Sky (MakerDAO) Forum',
+    base_url: 'https://forum.sky.money',
+    api_type: 'discourse',
+    poll_interval_s: 7200,
+    default_category: 'GOVERNANCE',
+  },
 ];
 
 // ── Tier 9: Additional L2 Governance (Discourse) ────────────────────────
@@ -498,6 +514,53 @@ export const TIER_12_RESEARCH_RSS: SourceDefinition[] = [
 
 // ── All Sources ────────────────────────────────────────────────────────
 
+// ── P1: High-Signal Sources (custom scrapers + RSS) ──────────────────────
+
+export const P1_HIGH_SIGNAL: SourceDefinition[] = [
+  {
+    id: 'rekt.news',
+    display_name: 'Rekt News — Exploit Post-Mortems',
+    base_url: 'https://rekt.news',
+    api_type: 'rekt_scraper',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'paradigm.xyz',
+    display_name: 'Paradigm Research',
+    base_url: 'https://www.paradigm.xyz',
+    api_type: 'paradigm_scraper',
+    poll_interval_s: 7200,
+    default_category: 'RESEARCH',
+  },
+  {
+    id: 'writings.flashbots.net',
+    display_name: 'Flashbots Writings',
+    base_url: 'https://writings.flashbots.net',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'RESEARCH',
+  },
+  {
+    id: 'samczsun.com',
+    display_name: 'samczsun — Security Research',
+    base_url: 'https://samczsun.com',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'hackmd.io/@timbeiko/acd',
+    display_name: 'Tim Beiko — ACD Updates',
+    base_url: 'https://hackmd.io/@timbeiko/acd',
+    api_type: 'hackmd_scraper',
+    poll_interval_s: 14400,
+    default_category: 'PROTOCOL_CALLS',
+  },
+];
+
+// ── All Sources ────────────────────────────────────────────────────────
+
 export const ALL_SOURCES: SourceDefinition[] = [
   ...TIER_1_SOURCES,
   ...TIER_2_SOURCES,
@@ -510,4 +573,5 @@ export const ALL_SOURCES: SourceDefinition[] = [
   ...TIER_10_MEV,
   ...TIER_11_STANDARDS,
   ...TIER_12_RESEARCH_RSS,
+  ...P1_HIGH_SIGNAL,
 ];

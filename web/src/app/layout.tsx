@@ -5,6 +5,7 @@ import { BottomNav } from '@/components/bottom-nav';
 import { FeedbackWidget } from '@/components/feedback-widget';
 import { ToastProvider } from '@/components/toast';
 import { PostHogProvider } from '@/components/posthog-provider';
+import { InstallPrompt } from '@/components/install-prompt';
 
 export const metadata: Metadata = {
   title: 'EthPulse',
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
             <BottomNav />
             <FeedbackWidget />
+            <InstallPrompt />
             <ToastProvider />
           </PostHogProvider>
         </body>

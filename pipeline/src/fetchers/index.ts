@@ -6,6 +6,9 @@ import { HtmlScraperFetcher } from './html-scraper.js';
 import { DefiLlamaFetcher } from './defillama.js';
 import { CryptoPanicFetcher } from './cryptopanic.js';
 import { CryptoNewsFetcher } from './crypto-news.js';
+import { RektNewsFetcher } from './rekt-news.js';
+import { ParadigmFetcher } from './paradigm.js';
+import { HackMdFetcher } from './hackmd.js';
 import type { FetcherConfig } from '@ethpulse/shared';
 
 const FETCHER_MAP: Record<string, new (config: FetcherConfig) => BaseFetcher> = {
@@ -16,6 +19,9 @@ const FETCHER_MAP: Record<string, new (config: FetcherConfig) => BaseFetcher> = 
   rest_api: DefiLlamaFetcher,
   cryptopanic: CryptoPanicFetcher,
   crypto_news_api: CryptoNewsFetcher,
+  rekt_scraper: RektNewsFetcher,
+  paradigm_scraper: ParadigmFetcher,
+  hackmd_scraper: HackMdFetcher,
 };
 
 export function createFetcher(config: FetcherConfig): BaseFetcher {

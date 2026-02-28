@@ -12,6 +12,7 @@ export interface CreateCardParams {
   publishedAt: Date;
   engagement: EngagementMetrics | null;
   pipelineVersion: string;
+  qualityScore?: number;
 }
 
 export async function createCard(params: CreateCardParams): Promise<string> {
@@ -26,6 +27,7 @@ export async function createCard(params: CreateCardParams): Promise<string> {
     published_at: params.publishedAt.toISOString(),
     engagement: params.engagement,
     pipeline_version: params.pipelineVersion,
+    quality_score: params.qualityScore ?? null,
   }).select('id').single();
 
   if (error) throw new Error(`Failed to create card for ${params.canonicalUrl}: ${error.message}`);
