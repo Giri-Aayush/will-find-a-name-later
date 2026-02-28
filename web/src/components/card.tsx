@@ -169,7 +169,7 @@ export const Card = memo(function Card({ card }: CardProps) {
         className="absolute top-0 right-3 z-10 btn-neon animate-in px-2 pb-2"
         style={{
           filter: saved ? 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))' : 'none',
-          touchAction: 'manipulation',
+          touchAction: 'none',
           WebkitTapHighlightColor: 'transparent',
         }}
         title={saved ? 'Unsave' : 'Save'}
@@ -324,8 +324,8 @@ export const Card = memo(function Card({ card }: CardProps) {
 
       {/* ── Bottom: Read Source + Reactions (single row) ── */}
       <div
-        className="card-actions shrink-0 pt-4 pb-16 animate-in animate-delay-3 relative z-10"
-        style={{ borderTop: '1px solid var(--border-medium)' }}
+        className="card-actions shrink-0 pt-4 animate-in animate-delay-3 relative z-10"
+        style={{ borderTop: '1px solid var(--border-medium)', paddingBottom: 'calc(48px + env(safe-area-inset-bottom, 8px))' }}
       >
         <div className="flex items-center">
           <a
@@ -354,7 +354,7 @@ export const Card = memo(function Card({ card }: CardProps) {
             style={{
               color: userReaction === 'up' ? 'var(--accent-green)' : 'var(--text-muted)',
               filter: userReaction === 'up' ? 'drop-shadow(0 0 6px rgba(34, 197, 94, 0.4))' : 'none',
-              touchAction: 'manipulation',
+              touchAction: 'none',
               WebkitTapHighlightColor: 'transparent',
             }}
           >
@@ -370,7 +370,7 @@ export const Card = memo(function Card({ card }: CardProps) {
             style={{
               color: userReaction === 'down' ? 'var(--accent-red)' : 'var(--text-muted)',
               filter: userReaction === 'down' ? 'drop-shadow(0 0 6px rgba(239, 68, 68, 0.4))' : 'none',
-              touchAction: 'manipulation',
+              touchAction: 'none',
               WebkitTapHighlightColor: 'transparent',
             }}
           >
@@ -386,7 +386,7 @@ export const Card = memo(function Card({ card }: CardProps) {
             style={{
               color: flagged ? 'var(--accent-red)' : 'var(--text-muted)',
               filter: flagged ? 'drop-shadow(0 0 6px rgba(239, 68, 68, 0.4))' : 'none',
-              touchAction: 'manipulation',
+              touchAction: 'none',
               WebkitTapHighlightColor: 'transparent',
             }}
             disabled={flagged}

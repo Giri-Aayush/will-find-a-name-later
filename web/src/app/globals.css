@@ -215,14 +215,23 @@ body::after {
   transition: width 0.3s ease-out;
 }
 
-/* ── Mobile tap fix (iOS needs cursor:pointer for click events) ── */
+/* ── Mobile tap fix ─────────────────────────────────────────────
+   Inside a scroll-snap container, even tiny finger movement during
+   a tap gets consumed as a scroll gesture, preventing click events.
+   Setting touch-action: none on interactive areas stops the scroll
+   container from stealing touches. iOS also needs cursor:pointer
+   on non-anchor elements for click synthesis.
+   ────────────────────────────────────────────────────────────── */
+.card-actions {
+  touch-action: none;
+}
 .card-actions button,
 .card-actions a,
 button.btn-neon,
 button.reaction-btn {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  touch-action: none;
 }
 
 /* ── Neon button styles ────────────────────────────────────────── */
