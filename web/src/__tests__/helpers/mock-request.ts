@@ -17,5 +17,5 @@ export function createMockRequest(
     init.body = JSON.stringify(body);
     (init.headers as Record<string, string>)['content-type'] = 'application/json';
   }
-  return new NextRequest(new URL(url, 'http://localhost:3000'), init);
+  return new NextRequest(new URL(url, 'http://localhost:3000'), init as any);
 }

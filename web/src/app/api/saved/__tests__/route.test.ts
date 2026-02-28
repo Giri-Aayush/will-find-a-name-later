@@ -53,7 +53,7 @@ function req(url: string, opts?: { method?: string; body?: unknown }) {
     init.body = JSON.stringify(body);
     init.headers = { 'content-type': 'application/json' };
   }
-  return new NextRequest(new URL(url, 'http://localhost:3000'), init);
+  return new NextRequest(new URL(url, 'http://localhost:3000'), init as any);
 }
 
 const VALID_UUID = '00000000-0000-0000-0000-000000000001';
