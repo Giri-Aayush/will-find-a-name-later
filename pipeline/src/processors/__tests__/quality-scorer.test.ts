@@ -143,7 +143,46 @@ describe('scoreQuality', () => {
       engagement: { likes: 0, replies: 0, views: 0 },
     });
     // 0.5 * 0.4 + 0.0 * 0.6 = 0.2
+    // The code checks `likes || replies || views` which is falsy when all are 0
     expect(score).toBeCloseTo(0.2, 5);
+  });
+
+  it('adds 0.10 for engagement with only views: 1', () => {
+    const score = scoreQuality({
+      sourceId: 'unknown-source.com',
+      headline: '',
+      summary: '',
+      author: null,
+      engagement: { likes: 0, replies: 0, views: 1 },
+    });
+    // 0.5 * 0.4 + 0.10 * 0.6 = 0.2 + 0.06 = 0.26
+    expect(score).toBeCloseTo(0.26, 5);
+  });
+
+  it('gives 0.35 headline bonus for a very long headline (1000 chars)', () => {
+    const longHeadline = 'A'.repeat(1000);
+    const score = scoreQuality({
+      sourceId: 'unknown-source.com',
+      headline: longHeadline,
+      summary: '',
+      author: null,
+      engagement: null,
+    });
+    // 0.5 * 0.4 + 0.35 * 0.6 = 0.2 + 0.21 = 0.41
+    expect(score).toBeCloseTo(0.41, 5);
+  });
+
+  it('gives 0.40 summary bonus for a very long summary (5000 chars)', () => {
+    const longSummary = 'B'.repeat(5000);
+    const score = scoreQuality({
+      sourceId: 'unknown-source.com',
+      headline: '',
+      summary: longSummary,
+      author: null,
+      engagement: null,
+    });
+    // 0.5 * 0.4 + 0.40 * 0.6 = 0.2 + 0.24 = 0.44
+    expect(score).toBeCloseTo(0.44, 5);
   });
 });
 

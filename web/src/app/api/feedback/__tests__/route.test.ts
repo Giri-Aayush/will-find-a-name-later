@@ -174,4 +174,52 @@ describe('POST /api/feedback', () => {
     const json = await res.json();
     expect(json.success).toBe(true);
   });
+
+  it('returns 400 when message is whitespace only', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    const res = await POST(
+      req('http://localhost:3000/api/feedback', {
+        method: 'POST',
+        body: { message: '   ' },
+      }),
+    );
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    expect(json.error).toContain('message');
+  });
+
+  it('returns 400 when message is newlines only', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    const res = await POST(
+      req('http://localhost:3000/api/feedback', {
+        method: 'POST',
+        body: { message: '\n\n\n' },
+      }),
+    );
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    expect(json.error).toContain('message');
+  });
+
+  it('returns 500 when DB error during insert', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: insert feedback — DB error
+    mockChains[0] = { data: null, error: { message: 'DB insert failed' } };
+
+    const res = await POST(
+      req('http://localhost:3000/api/feedback', {
+        method: 'POST',
+        body: { message: 'Great app!' },
+      }),
+    );
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to submit feedback');
+  });
 });

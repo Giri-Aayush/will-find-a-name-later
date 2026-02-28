@@ -32,6 +32,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'message too long (500 char max)' }, { status: 400 });
   }
 
+  if (page_url && (typeof page_url !== 'string' || page_url.length > 2048)) {
+    return NextResponse.json({ error: 'page_url too long (2048 char max)' }, { status: 400 });
+  }
+
   const { error } = await supabase
     .from('feedback')
     .insert({

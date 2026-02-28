@@ -317,7 +317,7 @@ export const TIER_8_DEFI_GOVERNANCE: SourceDefinition[] = [
   {
     id: 'comp.xyz',
     display_name: 'Compound Community Forum',
-    base_url: 'https://comp.xyz',
+    base_url: 'https://www.comp.xyz',
     api_type: 'discourse',
     poll_interval_s: 7200,
     default_category: 'GOVERNANCE',
@@ -586,6 +586,173 @@ export const TIER_14_LANGUAGE_RELEASES: SourceDefinition[] = [
   },
 ];
 
+// ── Tier 15: L2 Team Blogs (RSS) ──────────────────────────────────────────
+
+export const TIER_15_L2_BLOGS: SourceDefinition[] = [
+  {
+    id: 'medium.com/ethereum-optimism',
+    display_name: 'Optimism Blog',
+    base_url: 'https://medium.com/ethereum-optimism',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'blog.arbitrum.io',
+    display_name: 'Arbitrum Blog',
+    base_url: 'https://blog.arbitrum.io',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'blog.matter-labs.io',
+    display_name: 'zkSync (Matter Labs) Blog',
+    base_url: 'https://blog.matter-labs.io',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'starkware.co',
+    display_name: 'StarkWare Blog',
+    base_url: 'https://starkware.co',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'medium.com/@polygonlabs',
+    display_name: 'Polygon Labs Blog',
+    base_url: 'https://medium.com/@polygonlabs',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+];
+
+// ── Tier 16: Research & Developer Blogs (RSS) ─────────────────────────────
+
+export const TIER_16_RESEARCH_BLOGS: SourceDefinition[] = [
+  {
+    id: 'dankradfeist.de',
+    display_name: 'Dankrad Feist — Ethereum Research',
+    base_url: 'https://dankradfeist.de',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'RESEARCH',
+  },
+  {
+    id: 'medium.com/@polynya',
+    display_name: 'Polynya — L2 & Scaling Research',
+    base_url: 'https://medium.com/@polynya',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'RESEARCH',
+  },
+  {
+    id: 'timbeiko.substack.com',
+    display_name: 'Tim Beiko — Protocol Updates',
+    base_url: 'https://timbeiko.substack.com',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'PROTOCOL_CALLS',
+  },
+  {
+    id: 'bankless.com',
+    display_name: 'Bankless — News & Analysis',
+    base_url: 'https://www.bankless.com',
+    api_type: 'rss',
+    poll_interval_s: 3600,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'paragraph.xyz/@devcon',
+    display_name: 'Devcon / Devconnect Updates',
+    base_url: 'https://paragraph.xyz/@devcon',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+  {
+    id: 'medium.com/consensys-media',
+    display_name: 'Consensys Blog',
+    base_url: 'https://medium.com/consensys-media',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'ANNOUNCEMENT',
+  },
+];
+
+// ── Tier 17: Security Auditors & Researchers (RSS) ────────────────────────
+
+export const TIER_17_SECURITY: SourceDefinition[] = [
+  {
+    id: 'www.zellic.io',
+    display_name: 'Zellic — Security Research',
+    base_url: 'https://www.zellic.io',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'www.chainalysis.com',
+    display_name: 'Chainalysis Blog',
+    base_url: 'https://www.chainalysis.com',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'slowmist.medium.com',
+    display_name: 'SlowMist — Security Intelligence',
+    base_url: 'https://slowmist.medium.com',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'www.halborn.com',
+    display_name: 'Halborn — Blockchain Security',
+    base_url: 'https://www.halborn.com',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'medium.com/dedaub',
+    display_name: 'Dedaub — Smart Contract Security',
+    base_url: 'https://medium.com/dedaub',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'medium.com/consensys-diligence',
+    display_name: 'Consensys Diligence — Audits',
+    base_url: 'https://medium.com/consensys-diligence',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'medium.com/cyfrin',
+    display_name: 'Cyfrin — Security Blog',
+    base_url: 'https://medium.com/cyfrin',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+  {
+    id: 'medium.com/@BlockSec',
+    display_name: 'BlockSec — Security Research',
+    base_url: 'https://medium.com/@BlockSec',
+    api_type: 'rss',
+    poll_interval_s: 7200,
+    default_category: 'SECURITY',
+  },
+];
+
 // ── All Sources ────────────────────────────────────────────────────────
 
 // ── P1: High-Signal Sources (custom scrapers + RSS) ──────────────────────
@@ -649,6 +816,9 @@ export const ALL_SOURCES: SourceDefinition[] = [
   ...TIER_12_RESEARCH_RSS,
   ...TIER_13_BLOGS,
   ...TIER_14_LANGUAGE_RELEASES,
+  ...TIER_15_L2_BLOGS,
+  ...TIER_16_RESEARCH_BLOGS,
+  ...TIER_17_SECURITY,
   ...P1_HIGH_SIGNAL,
 ];
 
@@ -660,8 +830,8 @@ export type QualityGrade = 'S' | 'A' | 'B' | 'C';
 
 const GRADE_MAP: [QualityGrade, SourceDefinition[]][] = [
   ['S', [...TIER_1_SOURCES, ...P1_HIGH_SIGNAL]],
-  ['A', [...TIER_2_SOURCES, ...TIER_5_SOURCES, ...TIER_10_MEV, ...TIER_11_STANDARDS, ...TIER_12_RESEARCH_RSS, ...TIER_14_LANGUAGE_RELEASES]],
-  ['B', [...TIER_3_SOURCES, ...TIER_6_SOURCES, ...TIER_8_DEFI_GOVERNANCE, ...TIER_13_BLOGS]],
+  ['A', [...TIER_2_SOURCES, ...TIER_5_SOURCES, ...TIER_10_MEV, ...TIER_11_STANDARDS, ...TIER_12_RESEARCH_RSS, ...TIER_14_LANGUAGE_RELEASES, ...TIER_16_RESEARCH_BLOGS]],
+  ['B', [...TIER_3_SOURCES, ...TIER_6_SOURCES, ...TIER_8_DEFI_GOVERNANCE, ...TIER_13_BLOGS, ...TIER_15_L2_BLOGS, ...TIER_17_SECURITY]],
   ['C', [...TIER_7_SOURCES, ...TIER_9_L2_GOVERNANCE]],
 ];
 

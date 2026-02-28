@@ -80,6 +80,21 @@ describe('normalize', () => {
     expect(result.publishedAt).toEqual(new Date('2024-01-15T12:00:00Z'));
   });
 
+  it('produces Invalid Date when published_at is an invalid date string (does not fall back)', () => {
+    // 'not-a-date' is truthy, so the ternary uses new Date('not-a-date') which is Invalid Date
+    const item = makeRawItem({ published_at: 'not-a-date', fetched_at: '2024-01-15T12:00:00Z' });
+    const result = normalize(item)!;
+    expect(result.publishedAt.getTime()).toBeNaN();
+  });
+
+  it('treats null raw_metadata as empty object', () => {
+    const item = makeRawItem({ raw_metadata: null as any });
+    const result = normalize(item)!;
+    expect(result.rawMetadata).toEqual({});
+    expect(result.author).toBeNull();
+    expect(result.engagement).toBeNull();
+  });
+
   describe('author extraction', () => {
     it('extracts Discourse author with name and username', () => {
       const item = makeRawItem({
@@ -117,6 +132,15 @@ describe('normalize', () => {
       const item = makeRawItem({ raw_metadata: {} });
       const result = normalize(item)!;
       expect(result.author).toBeNull();
+    });
+
+    it('gives author priority over source_name when both are present (GitHub pattern)', () => {
+      const item = makeRawItem({
+        raw_metadata: { author: 'timbeiko', source_name: 'CoinDesk' },
+      });
+      const result = normalize(item)!;
+      // extractAuthor checks metadata.author before metadata.source_name
+      expect(result.author).toBe('@timbeiko');
     });
   });
 

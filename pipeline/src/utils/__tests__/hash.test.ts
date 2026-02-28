@@ -31,4 +31,23 @@ describe('hashUrl', () => {
     const result = hashUrl('');
     expect(result).toMatch(/^[0-9a-f]{64}$/);
   });
+
+  it('handles Unicode URL and returns valid 64-char hex', () => {
+    const result = hashUrl('https://例え.jp/ページ');
+    expect(result).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it('handles very long URL (10,000 chars) and returns valid 64-char hex', () => {
+    const longUrl = 'https://example.com/' + 'a'.repeat(10000);
+    const result = hashUrl(longUrl);
+    expect(result).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it('is deterministic for URLs with special characters', () => {
+    const url = 'https://example.com/path?a=1&b=2#section';
+    const hash1 = hashUrl(url);
+    const hash2 = hashUrl(url);
+    expect(hash1).toBe(hash2);
+    expect(hash1).toMatch(/^[0-9a-f]{64}$/);
+  });
 });

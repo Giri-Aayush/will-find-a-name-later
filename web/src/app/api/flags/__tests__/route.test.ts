@@ -226,4 +226,89 @@ describe('POST /api/flags', () => {
     const json = await res.json();
     expect(json.success).toBe(true);
   });
+
+  it('accepts empty string reason (valid string with length <= 500)', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: check existing flag — not found
+    mockChains[0] = { data: null, error: null };
+    // Chain 1: check card exists — found
+    mockChains[1] = { data: { id: VALID_UUID, flag_count: 1 }, error: null };
+    // Chain 2: insert flag
+    mockChains[2] = { data: null, error: null };
+    // Chain 3: update card flag_count
+    mockChains[3] = { data: null, error: null };
+
+    const res = await POST(
+      req('http://localhost:3000/api/flags', {
+        method: 'POST',
+        body: { card_id: VALID_UUID, reason: '' },
+      }),
+    );
+    expect(res.status).toBe(201);
+
+    const json = await res.json();
+    expect(json.success).toBe(true);
+  });
+
+  it('accepts whitespace-only reason (valid string with length <= 500)', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: check existing flag — not found
+    mockChains[0] = { data: null, error: null };
+    // Chain 1: check card exists — found
+    mockChains[1] = { data: { id: VALID_UUID, flag_count: 0 }, error: null };
+    // Chain 2: insert flag
+    mockChains[2] = { data: null, error: null };
+    // Chain 3: update card flag_count
+    mockChains[3] = { data: null, error: null };
+
+    const res = await POST(
+      req('http://localhost:3000/api/flags', {
+        method: 'POST',
+        body: { card_id: VALID_UUID, reason: '   ' },
+      }),
+    );
+    expect(res.status).toBe(201);
+
+    const json = await res.json();
+    expect(json.success).toBe(true);
+  });
+
+  it('returns 500 when DB error on flag insert', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: check existing flag — not found
+    mockChains[0] = { data: null, error: null };
+    // Chain 1: check card exists — found
+    mockChains[1] = { data: { id: VALID_UUID, flag_count: 0 }, error: null };
+    // Chain 2: insert flag — DB error
+    mockChains[2] = { data: null, error: { message: 'DB insert failed' } };
+
+    const res = await POST(
+      req('http://localhost:3000/api/flags', {
+        method: 'POST',
+        body: { card_id: VALID_UUID },
+      }),
+    );
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to submit flag');
+  });
+
+  it('returns 400 when card_id is a number instead of string', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    const res = await POST(
+      req('http://localhost:3000/api/flags', {
+        method: 'POST',
+        body: { card_id: 123 },
+      }),
+    );
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    expect(json.error).toContain('card_id');
+  });
 });

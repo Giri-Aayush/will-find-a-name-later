@@ -33,6 +33,15 @@ describe('levenshteinDistance', () => {
   it('returns 0 for both empty strings', () => {
     expect(levenshteinDistance('', '')).toBe(0);
   });
+
+  it('returns 1 for Unicode strings "café" vs "cafe"', () => {
+    expect(levenshteinDistance('café', 'cafe')).toBe(1);
+  });
+
+  it('returns 0 for very long identical strings (1000+ chars)', () => {
+    const longStr = 'a'.repeat(1000);
+    expect(levenshteinDistance(longStr, longStr)).toBe(0);
+  });
 });
 
 describe('isSimilar', () => {
@@ -60,5 +69,11 @@ describe('isSimilar', () => {
   it('returns true with custom threshold 0.5 for "abc" vs "axc"', () => {
     // distance = 1, maxLen = 3, ratio = 1/3 ≈ 0.33 < 0.5 → true
     expect(isSimilar('abc', 'axc', 0.5)).toBe(true);
+  });
+
+  it('returns false when one string is empty and the other is not', () => {
+    // distance = 5, maxLen = 5, ratio = 5/5 = 1.0 >= 0.2 → false
+    expect(isSimilar('', 'hello')).toBe(false);
+    expect(isSimilar('hello', '')).toBe(false);
   });
 });

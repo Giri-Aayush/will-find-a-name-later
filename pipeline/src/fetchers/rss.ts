@@ -12,7 +12,7 @@ const CONTENT_SELECTORS: Record<string, string> = {
 };
 
 // RSS/Atom feed URLs for each source
-const RSS_FEEDS: Record<string, string> = {
+export const RSS_FEEDS: Record<string, string> = {
   // Tier 1
   'blog.ethereum.org': 'https://blog.ethereum.org/feed.xml',
   'vitalik.eth.limo': 'https://vitalik.eth.limo/feed.xml',
@@ -47,6 +47,28 @@ const RSS_FEEDS: Record<string, string> = {
   // Tier 14 — Smart contract language releases
   'github.com/ethereum/solidity': 'https://github.com/ethereum/solidity/releases.atom',
   'github.com/vyperlang/vyper': 'https://github.com/vyperlang/vyper/releases.atom',
+  // Tier 15 — L2 team blogs
+  'medium.com/ethereum-optimism': 'https://medium.com/feed/ethereum-optimism',
+  'blog.arbitrum.io': 'https://blog.arbitrum.io/rss/',
+  'blog.matter-labs.io': 'https://blog.matter-labs.io/feed',
+  'starkware.co': 'https://starkware.co/feed/',
+  'medium.com/@polygonlabs': 'https://medium.com/feed/@polygonlabs',
+  // Tier 16 — Research & developer blogs
+  'dankradfeist.de': 'https://dankradfeist.de/feed.xml',
+  'medium.com/@polynya': 'https://medium.com/feed/@polynya',
+  'timbeiko.substack.com': 'https://timbeiko.substack.com/feed',
+  'bankless.com': 'https://www.bankless.com/rss/feed',
+  'paragraph.xyz/@devcon': 'https://paragraph.xyz/@devcon/feed',
+  'medium.com/consensys-media': 'https://medium.com/feed/consensys-media',
+  // Tier 17 — Security auditors & researchers
+  'www.zellic.io': 'https://www.zellic.io/blog/rss.xml',
+  'www.chainalysis.com': 'https://www.chainalysis.com/blog/feed/',
+  'slowmist.medium.com': 'https://slowmist.medium.com/feed',
+  'www.halborn.com': 'https://www.halborn.com/blog/feed.xml',
+  'medium.com/dedaub': 'https://medium.com/feed/dedaub',
+  'medium.com/consensys-diligence': 'https://medium.com/feed/consensys-diligence',
+  'medium.com/cyfrin': 'https://medium.com/feed/cyfrin',
+  'medium.com/@BlockSec': 'https://medium.com/feed/@BlockSec',
   // P1 high-signal sources with RSS
   'writings.flashbots.net': 'https://writings.flashbots.net/rss.xml',
   'samczsun.com': 'https://samczsun.com/rss/',

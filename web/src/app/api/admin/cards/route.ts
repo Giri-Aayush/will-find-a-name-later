@@ -2,14 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAdmin } from '@/lib/admin';
 import { supabase } from '@/lib/supabase';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function GET(request: NextRequest) {
   const { admin } = await isAdmin();
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { searchParams } = new URL(request.url);
-  const search = searchParams.get('q') ?? '';
+  const search = (searchParams.get('q') ?? '').slice(0, 100);
   const suspended = searchParams.get('suspended') === 'true';
-  const limit = Math.min(parseInt(searchParams.get('limit') ?? '50', 10), 100);
+  const limit = Math.max(1, Math.min(parseInt(searchParams.get('limit') ?? '50', 10) || 50, 100));
 
   let query = supabase
     .from('cards')
@@ -22,11 +24,12 @@ export async function GET(request: NextRequest) {
   }
 
   if (search) {
-    query = query.ilike('headline', `%${search}%`);
+    const safeSearch = search.replace(/[%_]/g, '\\$&');
+    query = query.ilike('headline', `%${safeSearch}%`);
   }
 
   const { data, error } = await query;
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: 'Failed to fetch cards' }, { status: 500 });
   return NextResponse.json({ cards: data ?? [] });
 }
 
@@ -44,12 +47,16 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'card_id and action required' }, { status: 400 });
   }
 
+  if (!UUID_RE.test(card_id)) {
+    return NextResponse.json({ error: 'Invalid card_id format' }, { status: 400 });
+  }
+
   if (action === 'suspend') {
     const { error } = await supabase
       .from('cards')
       .update({ is_suspended: true })
       .eq('id', card_id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: 'Failed to suspend card' }, { status: 500 });
     return NextResponse.json({ success: true });
   }
 
@@ -58,7 +65,7 @@ export async function PATCH(request: NextRequest) {
       .from('cards')
       .update({ is_suspended: false })
       .eq('id', card_id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: 'Failed to unsuspend card' }, { status: 500 });
     return NextResponse.json({ success: true });
   }
 
@@ -67,7 +74,7 @@ export async function PATCH(request: NextRequest) {
       .from('cards')
       .delete()
       .eq('id', card_id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: 'Failed to delete card' }, { status: 500 });
     return NextResponse.json({ success: true });
   }
 

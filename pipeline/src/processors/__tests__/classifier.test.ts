@@ -41,4 +41,18 @@ describe('classify', () => {
   it('defaults unknown source to ANNOUNCEMENT', () => {
     expect(classify('unknown-source.example.com')).toBe('ANNOUNCEMENT');
   });
+
+  it('returns ANNOUNCEMENT for empty string sourceId', () => {
+    expect(classify('')).toBe('ANNOUNCEMENT');
+  });
+
+  it('returns ANNOUNCEMENT for sourceId with trailing whitespace (no match)', () => {
+    // 'ethresear.ch ' does not match 'ethresear.ch' in the Map
+    expect(classify('ethresear.ch ')).toBe('ANNOUNCEMENT');
+  });
+
+  it('returns ANNOUNCEMENT for uppercase sourceId (Map keys are case-sensitive)', () => {
+    // 'ETHRESEAR.CH' does not match 'ethresear.ch' in the Map
+    expect(classify('ETHRESEAR.CH')).toBe('ANNOUNCEMENT');
+  });
 });

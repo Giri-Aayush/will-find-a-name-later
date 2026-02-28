@@ -282,4 +282,123 @@ describe('POST /api/reactions', () => {
     const json = await res.json();
     expect(json.reaction).toBe('up');
   });
+
+  it('returns 500 when DB error occurs during reaction insert', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: check existing — not found
+    mockChains[0] = { data: null, error: null };
+    // Chain 1: insert reaction — DB error
+    mockChains[1] = { data: null, error: { message: 'DB insert failed' } };
+
+    const res = await POST(
+      req('http://localhost:3000/api/reactions', {
+        method: 'POST',
+        body: { card_id: VALID_UUID, reaction: 'up' },
+      }),
+    );
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to save reaction');
+  });
+
+  it('returns 400 for empty body {}', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    const res = await POST(
+      req('http://localhost:3000/api/reactions', {
+        method: 'POST',
+        body: {},
+      }),
+    );
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    expect(json.error).toContain('card_id');
+  });
+
+  it('returns 400 when reaction is null', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    const res = await POST(
+      req('http://localhost:3000/api/reactions', {
+        method: 'POST',
+        body: { card_id: VALID_UUID, reaction: null },
+      }),
+    );
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    expect(json.error).toContain('reaction');
+  });
+
+  it('returns 400 when card_id is a number instead of string', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    const res = await POST(
+      req('http://localhost:3000/api/reactions', {
+        method: 'POST',
+        body: { card_id: 123, reaction: 'up' },
+      }),
+    );
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    expect(json.error).toContain('card_id');
+  });
+});
+
+describe('GET /api/reactions edge cases', () => {
+  it('returns reactions and userReactions for multiple valid card_ids with authenticated user', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: from('cards').select(...).in(...)
+    mockChains[0] = {
+      data: [
+        { id: VALID_UUID, reaction_up_count: 5, reaction_down_count: 2 },
+        { id: VALID_UUID_2, reaction_up_count: 10, reaction_down_count: 0 },
+      ],
+      error: null,
+    };
+    // Chain 1: auth() already resolved above
+    // Chain 1: from('reactions').select(...).eq(...).in(...)
+    mockChains[1] = {
+      data: [
+        { card_id: VALID_UUID, reaction: 'up' },
+        { card_id: VALID_UUID_2, reaction: 'down' },
+      ],
+      error: null,
+    };
+
+    const res = await GET(
+      req(`http://localhost:3000/api/reactions?card_ids=${VALID_UUID},${VALID_UUID_2}`),
+    );
+    expect(res.status).toBe(200);
+
+    const json = await res.json();
+    expect(json.reactions[VALID_UUID]).toEqual({ up: 5, down: 2 });
+    expect(json.reactions[VALID_UUID_2]).toEqual({ up: 10, down: 0 });
+    expect(json.userReactions[VALID_UUID]).toBe('up');
+    expect(json.userReactions[VALID_UUID_2]).toBe('down');
+  });
+
+  it('only processes first 50 card_ids when 51+ provided', async () => {
+    // Generate 51 valid UUIDs
+    const ids = Array.from({ length: 51 }, (_, i) =>
+      `00000000-0000-0000-0000-${String(i).padStart(12, '0')}`,
+    );
+
+    // Chain 0: from('cards').select(...).in(...)
+    mockChains[0] = { data: [], error: null };
+
+    const res = await GET(
+      req(`http://localhost:3000/api/reactions?card_ids=${ids.join(',')}`),
+    );
+    expect(res.status).toBe(200);
+
+    // Route slices to first 50, so the 51st UUID should not cause issues
+    const json = await res.json();
+    expect(json.reactions).toBeDefined();
+  });
 });

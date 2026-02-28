@@ -157,4 +157,79 @@ describe('POST /api/card-views', () => {
     const json = await res.json();
     expect(json.recorded).toBe(2);
   });
+
+  it('returns 400 for invalid JSON body', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    const r = new NextRequest(
+      new URL('http://localhost:3000/api/card-views'),
+      {
+        method: 'POST',
+        body: 'not json',
+        headers: { 'content-type': 'application/json' },
+      },
+    );
+
+    const res = await POST(r);
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    expect(json.error).toContain('Invalid JSON');
+  });
+
+  it('returns 500 when DB error on upsert', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: upsert — DB error
+    mockChains[0] = { data: null, error: { message: 'DB upsert failed' } };
+
+    const res = await POST(
+      req('http://localhost:3000/api/card-views', {
+        method: 'POST',
+        body: { card_ids: [VALID_UUID] },
+      }),
+    );
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to record views');
+  });
+
+  it('filters out non-string and invalid UUID entries from mixed types array', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: upsert
+    mockChains[0] = { data: null, error: null };
+
+    const res = await POST(
+      req('http://localhost:3000/api/card-views', {
+        method: 'POST',
+        body: { card_ids: [VALID_UUID, 123, null, 'invalid'] },
+      }),
+    );
+    expect(res.status).toBe(200);
+
+    const json = await res.json();
+    // Only VALID_UUID passes the filter (typeof string && UUID_RE match)
+    expect(json.recorded).toBe(1);
+  });
+
+  it('processes duplicate valid UUIDs (dedup is on DB side via upsert)', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: upsert
+    mockChains[0] = { data: null, error: null };
+
+    const res = await POST(
+      req('http://localhost:3000/api/card-views', {
+        method: 'POST',
+        body: { card_ids: [VALID_UUID, VALID_UUID] },
+      }),
+    );
+    expect(res.status).toBe(200);
+
+    const json = await res.json();
+    // Both pass the filter, dedup happens on DB side via ignoreDuplicates
+    expect(json.recorded).toBe(2);
+  });
 });

@@ -37,6 +37,20 @@ function parseIntervalFilter(args: string[]): { min?: number; max?: number } {
   };
 }
 
+// Track active run for graceful shutdown
+let activeRunId: string | null = null;
+
+for (const signal of ['SIGTERM', 'SIGINT'] as const) {
+  process.on(signal, async () => {
+    logger.warn(`Received ${signal} — releasing lock and shutting down`);
+    if (activeRunId) {
+      await releaseLock(activeRunId, { status: 'failed', errorMessage: `Killed by ${signal}`, itemsFetched: 0, cardsCreated: 0, cardsSkipped: 0, cardsFailed: 0 });
+    }
+    await logger.flush();
+    process.exit(0);
+  });
+}
+
 async function main() {
   const config = loadConfig();
   const sourceFilter = parseSourceFilter(process.argv);
@@ -46,6 +60,7 @@ async function main() {
 
   // ── Execution lock ──────────────────────────────────────────────────
   const runId = await acquireLock();
+  activeRunId = runId;
   if (!runId) {
     logger.info('Another pipeline run is active — exiting gracefully');
     process.exit(0);

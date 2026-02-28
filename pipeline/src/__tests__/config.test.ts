@@ -93,4 +93,18 @@ describe('loadConfig', () => {
     const config = await loadFreshConfig();
     expect(config.dryRun).toBe(true);
   });
+
+  it('returns NaN for batchSize when BATCH_SIZE is non-numeric string', async () => {
+    vi.stubEnv('BATCH_SIZE', 'not-a-number');
+    const config = await loadFreshConfig();
+    // parseInt('not-a-number', 10) returns NaN
+    expect(config.batchSize).toBeNaN();
+  });
+
+  it('accepts PIPELINE_ENV=staging without throwing', async () => {
+    vi.stubEnv('PIPELINE_ENV', 'staging');
+    const config = await loadFreshConfig();
+    // The code casts any string as PipelineEnv, so 'staging' is accepted
+    expect(config.env).toBe('staging');
+  });
 });

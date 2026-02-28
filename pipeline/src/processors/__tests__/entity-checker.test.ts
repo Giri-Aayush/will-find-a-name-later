@@ -40,6 +40,17 @@ describe('extractEntities', () => {
   it('returns empty array when no entities found', () => {
     expect(extractEntities('Just some plain text with no entities')).toEqual([]);
   });
+
+  it('extracts entities from text with HTML tags', () => {
+    const result = extractEntities('<p>EIP-4844 is great</p>');
+    expect(result).toEqual(expect.arrayContaining(['EIP-4844']));
+  });
+
+  it('deduplicates when same entity appears three times', () => {
+    const result = extractEntities('EIP-4844 EIP-4844 EIP-4844');
+    expect(result).toEqual(['EIP-4844']);
+    expect(result).toHaveLength(1);
+  });
 });
 
 describe('checkEntityPreservation', () => {
@@ -96,5 +107,10 @@ describe('checkEntityPreservation', () => {
     const summary = 'EIP-1559 changed fees';
     const result = checkEntityPreservation(source, summary);
     expect(result.missingEntities).toEqual(expect.arrayContaining(['15%', '$2M']));
+  });
+
+  it('returns passed: true with empty missing list when both source and summary are empty', () => {
+    const result = checkEntityPreservation('', '');
+    expect(result).toEqual({ passed: true, missingEntities: [] });
   });
 });

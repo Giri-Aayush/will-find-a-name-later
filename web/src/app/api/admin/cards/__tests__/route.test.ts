@@ -251,4 +251,51 @@ describe('PATCH /api/admin/cards', () => {
     const json = await res.json();
     expect(json.error).toContain('Invalid action');
   });
+
+  it('returns 500 when DB error on suspend action', async () => {
+    mockIsAdmin.mockResolvedValue({ admin: true, userId: 'admin_1' });
+
+    // Chain 0: update card — DB error
+    mockChains[0] = { data: null, error: { message: 'DB update failed' } };
+
+    const res = await PATCH(
+      req('http://localhost:3000/api/admin/cards', {
+        method: 'PATCH',
+        body: { card_id: VALID_UUID, action: 'suspend' },
+      }),
+    );
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to suspend card');
+  });
+});
+
+describe('GET /api/admin/cards edge cases', () => {
+  it('returns 500 when DB error occurs', async () => {
+    mockIsAdmin.mockResolvedValue({ admin: true, userId: 'admin_1' });
+
+    // Chain 0: from('cards').select(...) — DB error
+    mockChains[0] = { data: null, error: { message: 'DB query failed' } };
+
+    const res = await GET(req('http://localhost:3000/api/admin/cards'));
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to fetch cards');
+  });
+
+  it('handles limit=0 — Math.min(0, 100) = 0', async () => {
+    mockIsAdmin.mockResolvedValue({ admin: true, userId: 'admin_1' });
+
+    mockChains[0] = { data: [], error: null };
+
+    const res = await GET(
+      req('http://localhost:3000/api/admin/cards?limit=0'),
+    );
+    expect(res.status).toBe(200);
+
+    const json = await res.json();
+    expect(json.cards).toEqual([]);
+  });
 });

@@ -62,4 +62,19 @@ describe('GET /api/health', () => {
     // Ensure it's a valid ISO timestamp
     expect(new Date(json.timestamp).toISOString()).toBe(json.timestamp);
   });
+
+  it('returns degraded when createClient itself throws an exception', async () => {
+    const { createClient } = await import('@supabase/supabase-js');
+    const mockCreateClient = vi.mocked(createClient);
+    mockCreateClient.mockImplementationOnce(() => {
+      throw new Error('createClient exploded');
+    });
+
+    const res = await GET();
+    expect(res.status).toBe(503);
+
+    const json = await res.json();
+    expect(json.status).toBe('degraded');
+    expect(json.checks.database).toBe('fail');
+  });
 });

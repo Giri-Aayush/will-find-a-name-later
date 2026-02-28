@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAdmin } from '@/lib/admin';
 import { supabase } from '@/lib/supabase';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function GET() {
   const { admin } = await isAdmin();
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -14,7 +16,7 @@ export async function GET() {
     .order('created_at', { ascending: false })
     .limit(100);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: 'Failed to fetch flags' }, { status: 500 });
   return NextResponse.json({ flags: data ?? [] });
 }
 
@@ -32,13 +34,17 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'flag_id and action required' }, { status: 400 });
   }
 
+  if (!UUID_RE.test(flag_id)) {
+    return NextResponse.json({ error: 'Invalid flag_id format' }, { status: 400 });
+  }
+
   if (action === 'resolve') {
     // Mark flag as resolved (dismiss — card stays)
     const { error } = await supabase
       .from('flags')
       .update({ resolved: true })
       .eq('id', flag_id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: 'Failed to resolve flag' }, { status: 500 });
     return NextResponse.json({ success: true });
   }
 

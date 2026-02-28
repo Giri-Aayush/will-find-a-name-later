@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:smoke": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

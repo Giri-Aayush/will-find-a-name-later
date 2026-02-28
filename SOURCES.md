@@ -4,8 +4,8 @@
 
 **The complete record of every source Hexcast monitors.**
 
-[![Sources](https://img.shields.io/badge/active%20sources-69-22c55e?style=flat-square)]()
-[![Tiers](https://img.shields.io/badge/tiers-14-3b82f6?style=flat-square)]()
+[![Sources](https://img.shields.io/badge/active%20sources-88-22c55e?style=flat-square)]()
+[![Tiers](https://img.shields.io/badge/tiers-17-3b82f6?style=flat-square)]()
 [![Categories](https://img.shields.io/badge/categories-8-3b82f6?style=flat-square)]()
 [![Updated](https://img.shields.io/badge/updated-February%202026-8a8a9a?style=flat-square)]()
 
@@ -205,6 +205,52 @@ Compiler releases for Solidity and Vyper. 30-minute poll — same urgency tier a
 
 ---
 
+### Tier 15 — L2 Team Blogs
+
+Official blogs from major L2 teams. Direct announcements about protocol upgrades, roadmap changes, and ecosystem updates.
+
+| Source | ID | Fetcher | Category | Poll |
+|---|---|---|---|---|
+| Optimism Blog | `medium.com/ethereum-optimism` | RSS | ANNOUNCEMENT | 2h |
+| Arbitrum Blog | `blog.arbitrum.io` | RSS | ANNOUNCEMENT | 2h |
+| zkSync (Matter Labs) Blog | `blog.matter-labs.io` | RSS | ANNOUNCEMENT | 2h |
+| StarkWare Blog | `starkware.co` | RSS | ANNOUNCEMENT | 2h |
+| Polygon Labs Blog | `medium.com/@polygonlabs` | RSS | ANNOUNCEMENT | 2h |
+
+---
+
+### Tier 16 — Research & Developer Blogs
+
+Individual researchers, protocol coordinators, and ecosystem media. High-signal voices in Ethereum R&D and analysis.
+
+| Source | ID | Fetcher | Category | Poll |
+|---|---|---|---|---|
+| Dankrad Feist | `dankradfeist.de` | RSS | RESEARCH | 2h |
+| Polynya | `medium.com/@polynya` | RSS | RESEARCH | 2h |
+| Tim Beiko — Protocol Updates | `timbeiko.substack.com` | RSS | PROTOCOL_CALLS | 2h |
+| Bankless | `bankless.com` | RSS | ANNOUNCEMENT | 1h |
+| Devcon / Devconnect | `paragraph.xyz/@devcon` | RSS | ANNOUNCEMENT | 2h |
+| Consensys Blog | `medium.com/consensys-media` | RSS | ANNOUNCEMENT | 2h |
+
+---
+
+### Tier 17 — Security Auditors & Researchers
+
+Audit firms and security research teams. Vulnerability disclosures, post-mortems, and smart contract security analysis.
+
+| Source | ID | Fetcher | Category | Poll |
+|---|---|---|---|---|
+| Zellic | `www.zellic.io` | RSS | SECURITY | 2h |
+| Chainalysis Blog | `www.chainalysis.com` | RSS | SECURITY | 2h |
+| SlowMist | `slowmist.medium.com` | RSS | SECURITY | 2h |
+| Halborn | `www.halborn.com` | RSS | SECURITY | 2h |
+| Dedaub | `medium.com/dedaub` | RSS | SECURITY | 2h |
+| Consensys Diligence | `medium.com/consensys-diligence` | RSS | SECURITY | 2h |
+| Cyfrin | `medium.com/cyfrin` | RSS | SECURITY | 2h |
+| BlockSec | `medium.com/@BlockSec` | RSS | SECURITY | 2h |
+
+---
+
 ### P1 — High-Signal Sources
 
 Elevated to P1 on content quality alone — each is either the only source for its type of content or publishes landmark-level material. Fetcher type varies: some require custom scrapers due to no RSS, others have RSS but warrant P1 treatment regardless.
@@ -225,7 +271,7 @@ Elevated to P1 on content quality alone — each is either the only source for i
 |---|---|---|
 | `discourse` | Polls `/latest.json` and `/latest.rss` | 21 governance and research forums |
 | `github_api` | GitHub REST API for releases, issues, PRs | 7 repositories |
-| `rss` | Standard RSS/Atom feed parsing | 29 blogs, newsletters, and GitHub release feeds |
+| `rss` | Standard RSS/Atom feed parsing | 48 blogs, newsletters, and GitHub release feeds |
 | `html_scraper` | Custom HTML scraper (`HtmlScraperFetcher`) | forkcast.org |
 | `rest_api` | Custom REST API client | 3 DefiLlama endpoints |
 | `cryptopanic` | CryptoPanic developer API | 3 trending feeds |
@@ -250,7 +296,7 @@ Sources removed from the pipeline, with the reason and date.
 | Source | Reason not added |
 |---|---|
 | The Daily Gwei | Discontinued August 2022. Final episode #532. Dead source. |
-| Polynya | Blog concluded by author. All content CC0 archived. No new posts. |
+| Polynya (Mirror) | Mirror.xyz blog concluded by author. Content CC0 archived. Medium account (`medium.com/@polynya`) still active — integrated as Tier 16. |
 | Chainlink Community Forum | `community.chain.link` returns NXDOMAIN — DNS removed. Community moved to Discord/Reddit. |
 | Delphi Digital | Paywalled. Cannot integrate paid research content. |
 | Messari (full) | Mostly paywalled. Only free data endpoints considered. |
@@ -261,15 +307,15 @@ Sources removed from the pipeline, with the reason and date.
 
 | Pipeline category | Active sources |
 |---|---|
-| RESEARCH | 8 |
+| RESEARCH | 10 |
 | EIP_ERC | 5 |
-| PROTOCOL_CALLS | 5 |
+| PROTOCOL_CALLS | 6 |
 | GOVERNANCE | 18 |
 | UPGRADE | 14 |
-| SECURITY | 6 |
-| ANNOUNCEMENT | 10 |
+| SECURITY | 14 |
+| ANNOUNCEMENT | 18 |
 | METRICS | 3 |
-| **Total** | **69** |
+| **Total** | **88** |
 
 ---
 
@@ -292,6 +338,9 @@ The quality scorer applies per-source weights. Items below the suppress threshol
 | Tier 12 | 0.85–0.95 | Trail of Bits = 0.95; Jon Charbonneau/OpenZeppelin = 0.90; Nethermind = 0.85 |
 | Tier 13 | 0.50 | Not in weight map — falls back to `DEFAULT_SOURCE_WEIGHT` |
 | Tier 14 | 0.50 | Not in weight map — falls back to `DEFAULT_SOURCE_WEIGHT` |
+| Tier 15 | 0.50 | Not in weight map — falls back to `DEFAULT_SOURCE_WEIGHT` |
+| Tier 16 | 0.50 | Not in weight map — falls back to `DEFAULT_SOURCE_WEIGHT` |
+| Tier 17 | 0.50 | Not in weight map — falls back to `DEFAULT_SOURCE_WEIGHT` |
 | P1 | 0.90–0.95 | rekt.news/Paradigm/samczsun = 0.95; Flashbots Writings/Tim Beiko = 0.90 |
 | **Suppress threshold** | **< 0.25** | Global — applies to all tiers |
 

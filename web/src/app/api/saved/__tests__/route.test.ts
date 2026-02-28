@@ -191,4 +191,54 @@ describe('POST /api/saved', () => {
     const json = await res.json();
     expect(json.saved).toBe(true);
   });
+
+  it('returns 500 when DB error on insert (save fails)', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: check existing — not found
+    mockChains[0] = { data: null, error: null };
+    // Chain 1: insert — DB error
+    mockChains[1] = { data: null, error: { message: 'DB insert failed' } };
+
+    const res = await POST(
+      req('http://localhost:3000/api/saved', {
+        method: 'POST',
+        body: { card_id: VALID_UUID },
+      }),
+    );
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to save card');
+  });
+
+  it('returns 400 when card_id is a number instead of string', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    const res = await POST(
+      req('http://localhost:3000/api/saved', {
+        method: 'POST',
+        body: { card_id: 123 },
+      }),
+    );
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    expect(json.error).toContain('card_id');
+  });
+});
+
+describe('GET /api/saved edge cases', () => {
+  it('returns 500 when DB error occurs', async () => {
+    mockAuth.mockResolvedValue({ userId: 'user_1' } as any);
+
+    // Chain 0: from('saved_cards').select(...).eq(...).order(...) — DB error
+    mockChains[0] = { data: null, error: { message: 'DB failure' } };
+
+    const res = await GET();
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to fetch saved cards');
+  });
 });

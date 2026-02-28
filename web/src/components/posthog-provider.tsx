@@ -8,6 +8,9 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
   const { isSignedIn, user } = useUser();
 
   useEffect(() => {
+    // Skip if PostHog was not initialized (missing key)
+    if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
+
     if (isSignedIn && user) {
       posthog.identify(user.id, {
         email: user.primaryEmailAddress?.emailAddress,

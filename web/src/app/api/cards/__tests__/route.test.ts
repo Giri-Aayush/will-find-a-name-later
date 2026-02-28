@@ -125,4 +125,58 @@ describe('GET /api/cards', () => {
     const json = await res.json();
     expect(json.error).toBe('Failed to fetch cards');
   });
+
+  it('handles limit=abc (non-numeric) — NaN propagates through Math.min', async () => {
+    const res = await GET(req('http://localhost:3000/api/cards?limit=abc'));
+    await res.json();
+
+    // Number('abc') = NaN, Math.min(NaN, 50) = NaN
+    expect(mockGetCards).toHaveBeenCalledWith(
+      expect.objectContaining({ limit: NaN }),
+    );
+  });
+
+  it('handles limit=0 — returns empty cards', async () => {
+    mockGetCards.mockResolvedValue([]);
+
+    const res = await GET(req('http://localhost:3000/api/cards?limit=0'));
+    const json = await res.json();
+
+    expect(mockGetCards).toHaveBeenCalledWith(
+      expect.objectContaining({ limit: 0 }),
+    );
+    expect(json.cards).toEqual([]);
+  });
+
+  it('handles limit=-5 — negative limit passes through Math.min', async () => {
+    const res = await GET(req('http://localhost:3000/api/cards?limit=-5'));
+    await res.json();
+
+    // Math.min(-5, 50) = -5
+    expect(mockGetCards).toHaveBeenCalledWith(
+      expect.objectContaining({ limit: -5 }),
+    );
+  });
+
+  it('hasMore is true when exactly limit cards returned', async () => {
+    const cards = Array.from({ length: 20 }, (_, i) => ({ id: String(i), headline: `card ${i}` }));
+    mockGetCards.mockResolvedValue(cards as any);
+
+    const res = await GET(req('http://localhost:3000/api/cards'));
+    const json = await res.json();
+
+    // Default limit is 20, returned 20 cards → hasMore = true
+    expect(json.hasMore).toBe(true);
+  });
+
+  it('hasMore is false when fewer than limit cards returned', async () => {
+    const cards = [{ id: '1', headline: 'card 1' }];
+    mockGetCards.mockResolvedValue(cards as any);
+
+    const res = await GET(req('http://localhost:3000/api/cards'));
+    const json = await res.json();
+
+    // Default limit is 20, returned 1 card → hasMore = false
+    expect(json.hasMore).toBe(false);
+  });
 });

@@ -130,4 +130,28 @@ describe('retry', () => {
     await vi.runAllTimersAsync();
     await assertion;
   });
+
+  it('calls fn exactly once and throws immediately with maxRetries: 1', async () => {
+    const fn = vi.fn().mockRejectedValueOnce(new Error('instant fail'));
+
+    const assertion = expect(retry(fn, { maxRetries: 1, delayMs: 1000 })).rejects.toThrow('instant fail');
+    await assertion;
+    expect(fn).toHaveBeenCalledTimes(1);
+    // No warn logged because it throws on maxRetries (attempt === maxRetries)
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it('defaults label to "operation" when not provided', async () => {
+    const fn = vi.fn()
+      .mockRejectedValueOnce(new Error('fail'))
+      .mockResolvedValueOnce('ok');
+
+    const promise = retry(fn, { delayMs: 1000 });
+    await vi.runAllTimersAsync();
+    await expect(promise).resolves.toBe('ok');
+
+    expect(logger.warn).toHaveBeenCalledWith(
+      expect.stringContaining('operation failed (attempt 1/3)')
+    );
+  });
 });

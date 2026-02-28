@@ -117,4 +117,37 @@ describe('checkUserRateLimit', () => {
       remaining: 0,
     });
   });
+
+  it('remaining count is correct at boundary (last allowed request)', () => {
+    for (let i = 0; i < 9; i++) {
+      checkUserRateLimit('user8', 'boundary', 10, 30_000);
+    }
+    // Request #10 should be allowed with remaining: 0
+    const result = checkUserRateLimit('user8', 'boundary', 10, 30_000);
+    expect(result).toEqual({ allowed: true, remaining: 0 });
+
+    // Request #11 should be denied
+    const denied = checkUserRateLimit('user8', 'boundary', 10, 30_000);
+    expect(denied).toEqual({ allowed: false, remaining: 0 });
+  });
+});
+
+describe('checkRateLimit edge cases', () => {
+  it('request #300 is allowed with remaining 0, request #301 is denied', () => {
+    for (let i = 0; i < 299; i++) {
+      checkRateLimit('10.0.0.100');
+    }
+    // Request #300 should be allowed with remaining: 0
+    const last = checkRateLimit('10.0.0.100');
+    expect(last).toEqual({ allowed: true, remaining: 0 });
+
+    // Request #301 should be denied
+    const denied = checkRateLimit('10.0.0.100');
+    expect(denied).toEqual({ allowed: false, remaining: 0 });
+  });
+
+  it('empty IP string does not crash', () => {
+    const result = checkRateLimit('');
+    expect(result).toEqual({ allowed: true, remaining: 299 });
+  });
 });

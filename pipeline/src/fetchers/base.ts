@@ -1,5 +1,7 @@
 import type { FetchResult, FetcherConfig } from '@hexcast/shared';
 
+const DEFAULT_TIMEOUT_MS = 30_000;
+
 export abstract class BaseFetcher {
   protected config: FetcherConfig;
 
@@ -17,5 +19,20 @@ export abstract class BaseFetcher {
     if (!date) return true;
     if (!this.config.lastPolledAt) return true;
     return date.getTime() > this.config.lastPolledAt.getTime();
+  }
+
+  /** fetch() wrapper with AbortController timeout (default 30s) */
+  protected async fetchWithTimeout(
+    url: string,
+    options: RequestInit = {},
+    timeoutMs = DEFAULT_TIMEOUT_MS
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 }

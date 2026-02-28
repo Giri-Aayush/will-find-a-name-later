@@ -119,4 +119,34 @@ describe('isDuplicate', () => {
     const expectedHash = createHash('sha256').update('https://example.com/article').digest('hex');
     expect(mockFindByUrlHash).toHaveBeenCalledWith(expectedHash);
   });
+
+  it('computes hash for empty URL string and still performs hash check', async () => {
+    mockFindByUrlHash.mockResolvedValueOnce(null);
+    mockFindByTimeRange.mockResolvedValueOnce([]);
+
+    const result = await isDuplicate('', 'Some Title', new Date('2024-01-15T12:00:00Z'));
+    expect(result).toBe(false);
+
+    // hashUrl('') should still produce a valid hash and be passed to findByUrlHash
+    const { createHash } = await import('node:crypto');
+    const expectedHash = createHash('sha256').update('').digest('hex');
+    expect(mockFindByUrlHash).toHaveBeenCalledWith(expectedHash);
+  });
+
+  it('propagates error when findByUrlHash throws', async () => {
+    mockFindByUrlHash.mockRejectedValueOnce(new Error('DB connection failed'));
+
+    await expect(
+      isDuplicate('https://example.com/article', 'Title', new Date())
+    ).rejects.toThrow('DB connection failed');
+  });
+
+  it('propagates error when findByTimeRange throws', async () => {
+    mockFindByUrlHash.mockResolvedValueOnce(null);
+    mockFindByTimeRange.mockRejectedValueOnce(new Error('Query timeout'));
+
+    await expect(
+      isDuplicate('https://example.com/article', 'Some Title', new Date('2024-01-15T12:00:00Z'))
+    ).rejects.toThrow('Query timeout');
+  });
 });

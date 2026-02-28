@@ -4,7 +4,7 @@
 
 **Six parameters. One composite score. Every source ranked.**
 
-[![Sources](https://img.shields.io/badge/sources-69-22c55e?style=flat-square)]()
+[![Sources](https://img.shields.io/badge/sources-88-22c55e?style=flat-square)]()
 [![Parameters](https://img.shields.io/badge/parameters-6-3b82f6?style=flat-square)]()
 [![S%20tier](https://img.shields.io/badge/S%20tier-29%20sources-3b82f6?style=flat-square)]()
 [![Updated](https://img.shields.io/badge/updated-February%202026-8a8a9a?style=flat-square)]()

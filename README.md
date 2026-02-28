@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](./LICENSE)
 [![Status](https://img.shields.io/badge/status-live-22c55e?style=flat-square)]()
-[![Sources](https://img.shields.io/badge/sources-69-3b82f6?style=flat-square)]()
+[![Sources](https://img.shields.io/badge/sources-88-3b82f6?style=flat-square)]()
 [![Categories](https://img.shields.io/badge/categories-8-3b82f6?style=flat-square)]()
 [![Built with Next.js](https://img.shields.io/badge/Next.js-15-0c0c14?style=flat-square&logo=next.js&logoColor=3b82f6)](https://nextjs.org)
 
@@ -14,10 +14,6 @@
 
 > Protocol updates. Governance votes. Security incidents. Client releases.<br/>
 > Every signal that moves the Ethereum ecosystem — one card, 60 words, always free.
-
-<br/>
-
-![Hexcast Feed](https://placehold.co/900x500/06060a/3b82f6?text=hexcast+feed&font=mono)
 
 <br/>
 
@@ -43,10 +39,10 @@ Week in Ethereum News filled this gap. It retired in January 2025. Hexcast picks
 
 **Hexcast** is an Ethereum ecosystem intelligence platform. The **Hexcast Feed** is what users see — a real-time stream of quality-scored, AI-summarized 60-word cards built for people who build on Ethereum.
 
-The platform monitors 69 curated sources across 14 tiers — protocol research forums, client repositories, governance portals, security researchers, DAO multisigs — and surfaces every significant development as a card in the Hexcast Feed. Updated continuously. Zero paywall. No email required.
+The platform monitors 88 curated sources across 17 tiers — protocol research forums, client repositories, governance portals, security researchers, L2 team blogs, audit firms — and surfaces every significant development as a card in the Hexcast Feed. Updated continuously. Zero paywall. No email required.
 
 ```
-69 sources  →  quality filter  →  60-word AI summary  →  hexcast feed
+88 sources  →  quality filter  →  60-word AI summary  →  hexcast feed
 ```
 
 ---
@@ -76,7 +72,7 @@ Every card preserves the identifiers that matter to protocol developers: EIP num
 
 ## Source depth
 
-**69 sources across 14 tiers — including sources no other aggregator tracks:**
+**88 sources across 17 tiers — including sources no other aggregator tracks:**
 
 | Tier | Sources |
 |---|---|
@@ -86,13 +82,15 @@ Every card preserves the identifiers that matter to protocol developers: EIP num
 | DeFi Governance | Aave · Lido · Compound · Curve · ENS · EigenLayer · The Graph · Safe · Sky (MakerDAO) |
 | MEV / PBS | Flashbots Collective · Flashbots PM · MEV-Boost Relay |
 | Client Releases | Geth · Nethermind · Besu · Reth · Erigon · Lighthouse · Prysm · Teku · Nimbus · Lodestar |
-| Research Blogs | Paradigm · Flashbots Writings · Jon Charbonneau · samczsun · Nethermind Blog |
-| Security | Rekt News · Trail of Bits · OpenZeppelin |
+| Research Blogs | Paradigm · Flashbots Writings · Jon Charbonneau · samczsun · Nethermind Blog · Dankrad Feist · Polynya |
+| Security | Rekt News · Trail of Bits · OpenZeppelin · Zellic · Chainalysis · SlowMist · Halborn · Dedaub · Consensys Diligence · Cyfrin · BlockSec |
+| L2 Team Blogs | Optimism · Arbitrum · zkSync (Matter Labs) · StarkWare · Polygon Labs |
 | Standards | RIPs · ERC-4337 / Account Abstraction · Foundry |
 | Metrics | DefiLlama (TVL · stablecoins · DEX volume) |
-| Protocol Coordination | Tim Beiko ACD Updates |
+| Protocol Coordination | Tim Beiko ACD Updates · Tim Beiko Substack |
+| Ecosystem Media | Bankless · Devcon/Devconnect · Consensys |
 | Crypto Signals | CryptoPanic (trending · hot · rising) · Crypto News API |
-| Language Releases | Go · Solidity |
+| Language Releases | Solidity · Vyper |
 
 Complete source registry — active sources, fetcher types, poll intervals, removed sources and reasons: [SOURCES.md](./SOURCES.md)
 Quality rankings across 6 parameters (authority, signal density, ecosystem impact, uniqueness, time sensitivity, integration reliability): [SOURCE_RANKINGS.md](./SOURCE_RANKINGS.md)
@@ -107,9 +105,9 @@ Quality rankings across 6 parameters (authority, signal density, ecosystem impac
 
 | Fetcher | Sources | Schedule |
 |---|---|---|
-| Discourse | ethresear.ch, Ethereum Magicians, 16 DAO governance forums | Every 2–4 hours |
+| Discourse | ethresear.ch, Ethereum Magicians, 19 DAO governance forums | Every 2–4 hours |
 | GitHub API | EIPs, ERCs, ACD PM — filters bot noise, only surfaces new proposals and meaningful merges | Every 4 hours |
-| RSS | Client releases (Geth, Prysm, etc.), research blogs, EF Blog | Every 30 min – 2 hours |
+| RSS | Client releases, L2 team blogs, research blogs, security auditors, EF Blog (48 feeds) | Every 30 min – 2 hours |
 | REST API | DefiLlama (TVL, stablecoins, DEX volume) | Every 1 hour |
 | CryptoPanic | Trending, hot, rising crypto signals | Every 30 minutes |
 | Crypto News API | Filtered crypto news | Every 30 minutes |
@@ -142,7 +140,7 @@ A concurrent-safe rate limiter (promise chain) spaces API calls ≥150ms apart t
 
 ### 4 · Personalized Feed
 
-Authenticated users (via Clerk) receive unseen-first ordering. The feed tracks what you have read and always surfaces what you have not. Category filters apply globally. Source toggles let you hide any of the 69 sources from your view permanently.
+Authenticated users (via Clerk) receive unseen-first ordering. The feed tracks what you have read and always surfaces what you have not. Category filters apply globally. Source toggles let you hide any of the 88 sources from your view permanently.
 
 ---
 
@@ -177,10 +175,15 @@ Authenticated users (via Clerk) receive unseen-first ordering. The feed tracks w
 
 - **CSP headers** — Content-Security-Policy restricts script, style, connect, and frame sources to known domains (Clerk, PostHog, Supabase, Google Fonts)
 - **HSTS** — `max-age=63072000; includeSubDomains; preload`
-- **Input validation** — UUID format validation, string length caps, array size limits on all API routes
+- **Input validation** — UUID format validation on all ID parameters, string length caps, array size limits, SQL wildcard escaping on search queries
+- **Error sanitization** — API routes never expose raw database error messages to clients
 - **Per-user rate limiting** — in-memory rate limiter keyed by `userId:action`
 - **Duplicate flag prevention** — 409 on repeat flags for same card
-- **X-Frame-Options: DENY**, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- **Environment validation** — startup fails fast on missing required env vars
+- **Global error boundary** — unhandled runtime errors render a recovery page, not a white screen
+- **Production source maps disabled** — no source code exposure in production builds
+- **Pipeline graceful shutdown** — SIGTERM/SIGINT release execution lock before exit
+- **X-Frame-Options: DENY**, X-Content-Type-Options, Referrer-Policy, Permissions-Policy (camera, microphone, geolocation, payment, USB, accelerometer, gyroscope)
 
 ---
 
@@ -200,7 +203,7 @@ Pull requests directly to [`packages/shared/src/constants/sources.ts`](./package
 
 ## Keep Hexcast running
 
-Hexcast is open source and free — no token, no paywall, no ads. Running it costs money: AI inference on every card, database hosting, 69 sources polled around the clock. If you find it useful, help keep the lights on.
+Hexcast is open source and free — no token, no paywall, no ads. Running it costs money: AI inference on every card, database hosting, 88 sources polled around the clock. If you find it useful, help keep the lights on.
 
 ```
 0x15bF7E2CF2720422757eC58131a2270583Af778c

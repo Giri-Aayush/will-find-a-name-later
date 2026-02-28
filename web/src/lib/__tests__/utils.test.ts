@@ -39,6 +39,41 @@ describe('relativeTime', () => {
     // Jan 5 (10 days before Jan 15)
     expect(result).toBe('Jan 5');
   });
+
+  it('returns "Invalid Date" for an invalid date string', () => {
+    const result = relativeTime('invalid-date');
+    // new Date('invalid-date').getTime() is NaN → diffMs is NaN → all comparisons fail → falls through to toLocaleDateString
+    expect(result).toBe('Invalid Date');
+  });
+
+  it('returns "just now" for a future date', () => {
+    const futureIso = new Date(NOW + 5 * 60_000).toISOString(); // 5 minutes in the future
+    const result = relativeTime(futureIso);
+    // diffMs is negative → diffMins is negative (e.g. -5) → diffMins < 1 is true → returns 'just now'
+    expect(result).toBe('just now');
+  });
+
+  it('returns "1m ago" at exactly 1 minute boundary', () => {
+    const iso = new Date(NOW - 60_000).toISOString(); // exactly 60 seconds ago
+    expect(relativeTime(iso)).toBe('1m ago');
+  });
+
+  it('returns "1h ago" at exactly 60 minutes boundary', () => {
+    const iso = new Date(NOW - 60 * 60_000).toISOString(); // exactly 60 minutes ago
+    expect(relativeTime(iso)).toBe('1h ago');
+  });
+
+  it('returns "1d ago" at exactly 24 hours boundary', () => {
+    const iso = new Date(NOW - 24 * 60 * 60_000).toISOString(); // exactly 24 hours ago
+    expect(relativeTime(iso)).toBe('1d ago');
+  });
+
+  it('returns formatted date at exactly 7 days boundary', () => {
+    const iso = new Date(NOW - 7 * 24 * 60 * 60_000).toISOString(); // exactly 7 days ago
+    const result = relativeTime(iso);
+    // 7 days before Jan 15 = Jan 8
+    expect(result).toBe('Jan 8');
+  });
 });
 
 describe('extractDomain', () => {
@@ -60,5 +95,15 @@ describe('extractDomain', () => {
 
   it('extracts hostname from URL with query string', () => {
     expect(extractDomain('https://example.com/page?foo=bar&baz=1')).toBe('example.com');
+  });
+
+  it('returns empty string for empty string input', () => {
+    // Empty string is not a valid URL → catches → returns original
+    expect(extractDomain('')).toBe('');
+  });
+
+  it('returns original for protocol-relative URL', () => {
+    // "//example.com/path" is not a valid URL for the URL constructor → catches → returns original
+    expect(extractDomain('//example.com/path')).toBe('//example.com/path');
   });
 });

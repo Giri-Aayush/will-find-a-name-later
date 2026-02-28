@@ -53,6 +53,8 @@ function req(url: string, opts?: { method?: string; body?: unknown }) {
   return new NextRequest(new URL(url, 'http://localhost:3000'), init);
 }
 
+const VALID_UUID = '00000000-0000-0000-0000-000000000001';
+
 // --- Tests ---
 
 beforeEach(() => {
@@ -142,7 +144,7 @@ describe('PATCH /api/admin/flags', () => {
     const res = await PATCH(
       req('http://localhost:3000/api/admin/flags', {
         method: 'PATCH',
-        body: { flag_id: 'f1', action: 'resolve' },
+        body: { flag_id: VALID_UUID, action: 'resolve' },
       }),
     );
     expect(res.status).toBe(200);
@@ -164,7 +166,7 @@ describe('PATCH /api/admin/flags', () => {
     const res = await PATCH(
       req('http://localhost:3000/api/admin/flags', {
         method: 'PATCH',
-        body: { flag_id: 'f1', action: 'suspend' },
+        body: { flag_id: VALID_UUID, action: 'suspend' },
       }),
     );
     expect(res.status).toBe(200);
@@ -177,13 +179,14 @@ describe('PATCH /api/admin/flags', () => {
   it('returns 404 when flag not found', async () => {
     mockIsAdmin.mockResolvedValue({ admin: true, userId: 'admin_1' });
 
+    const missingUuid = '00000000-0000-0000-0000-000000000099';
     // Chain 0: get flag — not found
     mockChains[0] = { data: null, error: null };
 
     const res = await PATCH(
       req('http://localhost:3000/api/admin/flags', {
         method: 'PATCH',
-        body: { flag_id: 'nonexistent', action: 'suspend' },
+        body: { flag_id: missingUuid, action: 'suspend' },
       }),
     );
     expect(res.status).toBe(404);
@@ -198,12 +201,45 @@ describe('PATCH /api/admin/flags', () => {
     const res = await PATCH(
       req('http://localhost:3000/api/admin/flags', {
         method: 'PATCH',
-        body: { flag_id: 'f1', action: 'delete' },
+        body: { flag_id: VALID_UUID, action: 'delete' },
       }),
     );
     expect(res.status).toBe(400);
 
     const json = await res.json();
     expect(json.error).toContain('Invalid action');
+  });
+
+  it('returns 500 when DB error on resolve', async () => {
+    mockIsAdmin.mockResolvedValue({ admin: true, userId: 'admin_1' });
+
+    // Chain 0: update flag resolved — DB error
+    mockChains[0] = { data: null, error: { message: 'DB update failed' } };
+
+    const res = await PATCH(
+      req('http://localhost:3000/api/admin/flags', {
+        method: 'PATCH',
+        body: { flag_id: VALID_UUID, action: 'resolve' },
+      }),
+    );
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to resolve flag');
+  });
+});
+
+describe('GET /api/admin/flags edge cases', () => {
+  it('returns 500 when DB error occurs', async () => {
+    mockIsAdmin.mockResolvedValue({ admin: true, userId: 'admin_1' });
+
+    // Chain 0: from('flags').select(...) — DB error
+    mockChains[0] = { data: null, error: { message: 'DB query failed' } };
+
+    const res = await GET();
+    expect(res.status).toBe(500);
+
+    const json = await res.json();
+    expect(json.error).toContain('Failed to fetch flags');
   });
 });
