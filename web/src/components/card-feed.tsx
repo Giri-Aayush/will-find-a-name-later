@@ -130,7 +130,10 @@ export function CardFeed({ initialCards, personalized, initialUnseenCount }: Car
       if (!res.ok) throw new Error();
       const data = await res.json();
 
-      setCards(prev => [...prev, ...data.cards]);
+      setCards(prev => {
+        const ids = new Set(prev.map(c => c.id));
+        return [...prev, ...data.cards.filter((c: { id: string }) => !ids.has(c.id))];
+      });
       setHasMore(data.hasMore);
 
       if (personalized && data.unseenCount !== undefined) {
