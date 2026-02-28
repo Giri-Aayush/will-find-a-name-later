@@ -11,9 +11,9 @@ export async function GET() {
   // Get all unresolved flags with card details
   const { data, error } = await supabase
     .from('flags')
-    .select('id, card_id, user_id, reason, created_at, resolved, cards(id, headline, summary, category, canonical_url, source_id, is_suspended)')
+    .select('id, card_id, user_id, reason, reported_at, resolved, cards(id, headline, summary, category, canonical_url, source_id, is_suspended)')
     .eq('resolved', false)
-    .order('created_at', { ascending: false })
+    .order('reported_at', { ascending: false })
     .limit(100);
 
   if (error) return NextResponse.json({ error: 'Failed to fetch flags' }, { status: 500 });

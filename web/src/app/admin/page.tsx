@@ -8,7 +8,7 @@ interface FlagItem {
   card_id: string;
   user_id: string;
   reason: string | null;
-  created_at: string;
+  reported_at: string;
   cards: {
     id: string;
     headline: string;
@@ -189,7 +189,7 @@ export default function AdminPage() {
                           {flag.cards?.source_id}
                         </span>
                         <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
-                          {new Date(flag.created_at).toLocaleDateString()}
+                          {new Date(flag.reported_at).toLocaleDateString()}
                         </span>
                       </div>
                       {flag.reason && (

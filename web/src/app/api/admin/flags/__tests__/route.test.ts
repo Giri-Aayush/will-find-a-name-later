@@ -77,7 +77,7 @@ describe('GET /api/admin/flags', () => {
     mockIsAdmin.mockResolvedValue({ admin: true, userId: 'admin_1' });
 
     const flagsData = [
-      { id: 'f1', card_id: 'c1', user_id: 'u1', reason: 'spam', created_at: '2024-01-01', resolved: false, cards: {} },
+      { id: 'f1', card_id: 'c1', user_id: 'u1', reason: 'spam', reported_at: '2024-01-01', resolved: false, cards: {} },
     ];
     // Chain 0: from('flags').select(...).eq(...).order(...).limit(...)
     mockChains[0] = { data: flagsData, error: null };
