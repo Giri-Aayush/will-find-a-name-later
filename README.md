@@ -198,6 +198,18 @@ Pull requests directly to [`packages/shared/src/constants/sources.ts`](./package
 
 ---
 
+## Keep Hexcast running
+
+Hexcast is open source and free — no token, no paywall, no ads. Running it costs money: AI inference on every card, database hosting, 69 sources polled around the clock. If you find it useful, help keep the lights on.
+
+```
+0x15bF7E2CF2720422757eC58131a2270583Af778c
+```
+
+Ethereum or Base. ETH, USDC, USDT.
+
+---
+
 ## License
 
 MIT — see [LICENSE](./LICENSE)

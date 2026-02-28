@@ -2,16 +2,19 @@ name: Pipeline - All Sources
 
 on:
   schedule:
-    # Every 2 hours — fetches from all 61 sources, processes up to BATCH_SIZE items
-    # On steady-state runs this takes ~5-10 min (only new items since last poll)
-    # First run after adding new sources may need multiple cycles to catch up
-    - cron: '0 */2 * * *'
+    # Every 6 hours — fetches from all 69 sources, processes up to BATCH_SIZE items
+    - cron: '0 */6 * * *'
   workflow_dispatch:
     inputs:
       batch_size:
         description: 'Max items to process (default 100)'
         required: false
         default: '100'
+
+# Prevent overlapping runs at the GitHub Actions level
+concurrency:
+  group: pipeline-run
+  cancel-in-progress: false
 
 jobs:
   pipeline:
@@ -37,5 +40,6 @@ jobs:
           GITHUB_PAT: ${{ secrets.GH_PAT }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CRYPTOPANIC_API_KEY: ${{ secrets.CRYPTOPANIC_API_KEY }}
+          SENTRY_DSN: ${{ secrets.PIPELINE_SENTRY_DSN }}
           PIPELINE_VERSION: '0.1.0'
           BATCH_SIZE: ${{ github.event.inputs.batch_size || '100' }}

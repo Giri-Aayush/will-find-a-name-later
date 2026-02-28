@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 import { join } from 'path';
 import withPWAInit from '@ducanh2912/next-pwa';
+import { withSentryConfig } from '@sentry/nextjs';
 
 const withPWA = withPWAInit({
   dest: 'public',
@@ -32,7 +33,7 @@ const nextConfig: NextConfig = withPWA({
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://*.clerk.dev https://img.clerk.com",
-              "connect-src 'self' https://*.supabase.co https://*.clerk.dev https://*.clerk.accounts.dev https://us.i.posthog.com https://us.posthog.com",
+              "connect-src 'self' https://*.supabase.co https://*.clerk.dev https://*.clerk.accounts.dev https://us.i.posthog.com https://us.posthog.com https://*.sentry.io",
               "frame-src https://*.clerk.dev https://*.clerk.accounts.dev https://challenges.cloudflare.com",
               "worker-src 'self' blob:",
               "manifest-src 'self'",
@@ -44,4 +45,10 @@ const nextConfig: NextConfig = withPWA({
   },
 });
 
-export default nextConfig;
+// Wrap with Sentry only when DSN is configured
+export default process.env.SENTRY_DSN
+  ? withSentryConfig(nextConfig, {
+      silent: true,
+      disableLogger: true,
+    })
+  : nextConfig;

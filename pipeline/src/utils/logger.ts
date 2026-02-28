@@ -1,3 +1,18 @@
+import * as Sentry from '@sentry/node';
+
+// ── Sentry init (optional — only active when SENTRY_DSN is set) ──────────
+const sentryEnabled = !!process.env.SENTRY_DSN;
+
+if (sentryEnabled) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.PIPELINE_ENV ?? 'dev',
+    tracesSampleRate: 0.1,
+  });
+}
+
+// ── Logger ────────────────────────────────────────────────────────────────
+
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 const LEVEL_ORDER: Record<LogLevel, number> = {
@@ -20,6 +35,19 @@ function log(level: LogLevel, message: string, ...args: unknown[]) {
   } else {
     console[level === 'error' ? 'error' : 'log'](prefix, message);
   }
+
+  // Forward errors and warnings to Sentry
+  if (sentryEnabled && level === 'error') {
+    const error = args.find((a) => a instanceof Error);
+    if (error) {
+      Sentry.captureException(error, { extra: { message } });
+    } else {
+      Sentry.captureMessage(message, 'error');
+    }
+  }
+  if (sentryEnabled && level === 'warn') {
+    Sentry.captureMessage(message, 'warning');
+  }
 }
 
 export const logger = {
@@ -27,4 +55,7 @@ export const logger = {
   info: (msg: string, ...args: unknown[]) => log('info', msg, ...args),
   warn: (msg: string, ...args: unknown[]) => log('warn', msg, ...args),
   error: (msg: string, ...args: unknown[]) => log('error', msg, ...args),
+  flush: async () => {
+    if (sentryEnabled) await Sentry.flush(5000);
+  },
 };

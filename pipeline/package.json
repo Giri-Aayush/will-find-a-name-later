@@ -10,8 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hexcast/shared": "*",
     "@google/generative-ai": "^0.24.1",
+    "@hexcast/shared": "*",
+    "@sentry/node": "^10.40.0",
     "@supabase/supabase-js": "^2.49.0",
     "cheerio": "^1.0.0",
     "openai": "^4.77.0",
