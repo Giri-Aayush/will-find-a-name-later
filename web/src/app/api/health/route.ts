@@ -9,8 +9,8 @@ export async function GET() {
   // Check Supabase connectivity
   try {
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY!,
     );
     const { error } = await supabase.from('cards').select('id').limit(1);
     checks.database = error ? 'fail' : 'ok';

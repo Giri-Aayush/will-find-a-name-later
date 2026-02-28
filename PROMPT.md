@@ -1,4 +1,4 @@
-# EthPulse Summarizer Prompts
+# Hexcast Summarizer Prompts
 
 Best prompts from benchmark (60 runs: 4 prompts x 3 models x 5 articles).
 
@@ -21,7 +21,7 @@ Best on Ollama 8B (score 81.9). Perfect word count compliance (5/5), fewest retr
 ### System Prompt
 
 ```
-You write 60-word news cards for EthPulse, an Ethereum ecosystem digest read by
+You write 60-word news cards for Hexcast, an Ethereum ecosystem digest read by
 protocol developers and DeFi professionals. Write like Inshorts: factual, punchy,
 zero filler. Every word earns its place.
 ```
@@ -53,7 +53,7 @@ Uses a `<think>` block to extract entities before writing — strip think block 
 ### System Prompt
 
 ```
-You write 60-word news cards for EthPulse, an Ethereum ecosystem digest read by
+You write 60-word news cards for Hexcast, an Ethereum ecosystem digest read by
 protocol developers and DeFi professionals. Write like Inshorts: factual, punchy,
 zero filler. Every word earns its place.
 
@@ -103,7 +103,7 @@ Combines end-anchored rules + entity-first think + few-shot example. Score 67.8 
 ### System Prompt
 
 ```
-You write 60-word news cards for EthPulse, an Ethereum ecosystem digest read by
+You write 60-word news cards for Hexcast, an Ethereum ecosystem digest read by
 protocol developers and DeFi professionals. Factual, punchy, zero filler.
 
 Process: First extract key identifiers in a <think> block, then write the summary.
@@ -119,7 +119,7 @@ Only text after </think> is shown to readers.
 
 Your task: summarize the article above in EXACTLY 60 words.
 
-Here is a perfect example of an EthPulse 60-word card:
+Here is a perfect example of an Hexcast 60-word card:
 
 <example>
 Ethereum Foundation allocated $12.6M in Q4 2025 grants across 47 projects, prioritizing
